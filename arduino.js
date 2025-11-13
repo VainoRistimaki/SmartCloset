@@ -17,6 +17,8 @@ const hangers = [
     new hanger(5, 60000),
 ]
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 class Arduino {
 
     constructor(id, port) {
@@ -24,19 +26,23 @@ class Arduino {
         this.port = port;
         this.board = new Board({ port: this.port, debug: true });
         this.ready = false;
-        this.pins = []
+        this.readPins = []
+        this.writePins = [3, 5, 6, 9, 10, 11]
         this.hangers = [null, null, null, null, null, null];
         this.resistor = 10000
 
         this.initialize();
     }
 
-    initialize() {
+    async initialize() {
         this.board.on('ready', async function () {
             // Initialize analog pins A1 to A6
             for (let i = 0; i < 6; i++) {
-                this.pins.push(new Pin("A" + (i + 1)))
+                this.readPins.push(new Pin("A" + (i + 1)))
             }
+            this.writePins.map(pinNum => {
+                return new Pin(pinNum);
+            })
             // Set the board as ready
             this.ready = true;
             console.log(`Arduino board ${this.id} is ready on port ${this.port}`);
@@ -49,32 +55,47 @@ class Arduino {
     }
 
     // Check a specific pin
-    checkPin(id) {
+    async checkPin(id) {
         if (this.ready) {
             // Query the pin for its current value
-            this.pins[id].query((state) => {
-                const resistance = this.calculateResistance(state.value);
-                
-                // Find the hanger with the closest resistor value
-                let bestMatch = null;
-                let smallestDiff = Infinity;
-                for (const hanger of hangers) {
-                    const diff = Math.abs(resistance - hanger.resistor);
-                    if (diff < smallestDiff) {
-                        smallestDiff = diff;
-                        bestMatch = hanger;
-                    }
+            this.writePins[id].high();
+
+            delay(10);
+
+            this.readPins[id].query((state) => {
+
+                if (state.value < 0.001) {
+                    this.hangers[id] = null;
                 }
 
-                this.hangers[id] = bestMatch;
+                else {
+                    const resistance = this.calculateResistance(state.value);
+                    
+                    // Find the hanger with the closest resistor value
+                    let bestMatch = null;
+                    let smallestDiff = Infinity;
+                    for (const hanger of hangers) {
+                        const diff = Math.abs(resistance - hanger.resistor);
+                        if (diff < smallestDiff) {
+                            smallestDiff = diff;
+                            bestMatch = hanger;
+                        }
+                    }
+
+                    this.hangers[id] = bestMatch;
+
+                }
+
             });
+
+            this.writePins[id].low();
         }
     }
 
     // Check all pins
-    checkPins() {
-        for (let i = 0; i < this.pins.length; i++) {
-            this.checkPin(i);
+    async checkPins() {
+        for (let i = 0; i < this.readPins.length; i++) {
+            await this.checkPin(i);
         }
     }
 
