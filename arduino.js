@@ -105,7 +105,47 @@ class Arduino {
         return (this.resistor * (v - voltage)) / voltage;
     }
 
+// lights up the pin with the right index on the arduino
+    lightPin(index) {
+        if (this.ready) {
+            this.writePins[index].high()
+        } 
+    }
+// closes a pin (and light) 
+    closePin(index) {
+        if (this.ready) {
+            this.writePins[index].low()
+        }
+    }
 
+    //closes all pins
+    closeAllPins() {
+        if (this.ready) {
+            for (const pin of this.writePins) {
+                pin.low()
+            }
+        }
+    }
+
+    //gives the pin index of the hanger present
+    hangerToPin(hangerID){
+        const pinIndex = this.hangers.findIndex(hanger => {
+            hanger.id == hangerID
+        })
+        return pinIndex
+    }
+
+// lights up the hanger containing the chosen cloth via the right pin
+    lightHanger(hangerID) {
+        const pinIndex = this.hangerToPin(hangerID)
+        this.lightPin(pinIndex)
+    }
+
+    //closes led in hanger
+    closeHanger(hangerID) {
+        const pinIndex = this.hangerToPin(hangerID)
+        this.closePin(pinIndex)
+    }
 
 }
 
