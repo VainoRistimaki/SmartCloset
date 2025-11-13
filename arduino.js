@@ -38,7 +38,7 @@ class Arduino {
         this.board.on('ready', async function () {
             // Initialize analog pins A1 to A6
             for (let i = 0; i < 6; i++) {
-                this.readPins.push(new Pin("A" + (i + 1)))
+                this.readPins.push(new Pin("A" + i))
             }
             this.writePins.map(pinNum => {
                 return new Pin(pinNum);
