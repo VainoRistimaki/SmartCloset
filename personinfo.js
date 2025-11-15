@@ -1,0 +1,1 @@
+"name: subin, age: 22, gender: female, ethnicity: Korean, skin tone: 21N (foundation color), height: 160cm, job:university student"
