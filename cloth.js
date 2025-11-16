@@ -5,7 +5,8 @@
     "type": "outer",
     "thickness": 4,
     "color": "black",
-    "formality": "formal"
+    "formality": "formal",
+    "style": ["chic", "minimal"]
   },
   {
     "id": 2,
@@ -13,15 +14,18 @@
     "type": "outer",
     "thickness": 5,
     "color": "white",
-    "formality": "casual"
+    "formality": "casual",
+    "style": ["casual", "minimal"]
   },
+
   {
     "id": 3,
     "name": "Sky Blue Knit",
     "type": "top",
     "thickness": 3,
     "color": "skyblue",
-    "formality": [ "casual", "formal"]
+    "formality": ["casual", "formal"],
+    "style": ["cute", "minimal"]
   },
   {
     "id": 4,
@@ -29,7 +33,8 @@
     "type": "top",
     "thickness": 3,
     "color": "pink",
-    "formality": [ "casual", "formal"]
+    "formality": ["casual", "formal"],
+    "style": ["feminine"]
   },
   {
     "id": 5,
@@ -37,7 +42,8 @@
     "type": "top",
     "thickness": 1,
     "color": "white",
-    "formality": "formal"
+    "formality": "formal",
+    "style": ["feminine", "formal"]
   },
   {
     "id": 6,
@@ -45,32 +51,36 @@
     "type": "top",
     "thickness": 2,
     "color": "beige",
-    "formality": "casual"
+    "formality": "casual",
+    "style": ["casual", "minimal"]
   },
   {
     "id": 7,
-    "name": "White Short-Sleeve Tee",
+    "name": "Black Long-Sleeve Tee",
     "type": "top",
-    "thickness": 1,
-    "color": "white",
-    "formality": "casual"
+    "thickness": 2,
+    "color": "black",
+    "formality": "casual",
+    "style": ["minimal", "sporty"]
   },
   {
     "id": 8,
-    "name": "Grey Short-Sleeve Tee",
+    "name": "Red Cardigan",
     "type": "top",
-    "thickness": 1,
-    "color": "grey",
-    "formality": "casual"
+    "thickness": 2,
+    "color": "red",
+    "formality": "casual",
+    "style": ["casual", "feminine"]
   },
+
   {
     "id": 9,
     "name": "Black Bootcut Pants",
     "type": "bottom",
     "thickness": 2,
     "color": "black",
-    "formality": [ "casual", "formal"
-    ]
+    "formality": ["casual", "formal"],
+    "style": ["minimal", "feminine"]
   },
   {
     "id": 10,
@@ -78,18 +88,17 @@
     "type": "bottom",
     "thickness": 2,
     "color": "gray",
-    "formality": "casual"
+    "formality": "casual",
+    "style": ["sporty", "casual"]
   },
   {
     "id": 11,
     "name": "Black Pleated Skirt",
     "type": "bottom",
-    "thickness": 2,
+    "thickness": 1,
     "color": "black",
-    "formality": [
-      "casual",
-      "formal"
-    ]
+    "formality": ["casual", "formal"],
+    "style": ["feminine"]
   },
   {
     "id": 12,
@@ -97,6 +106,16 @@
     "type": "bottom",
     "thickness": 2,
     "color": "blue",
-    "formality": "casual"
+    "formality": "casual",
+    "style": ["minimal", "casual"]
+  },
+  {
+    "id": 13,
+    "name": "Black Leggings",
+    "type": "bottom",
+    "thickness": 2,
+    "color": "black",
+    "formality": "casual",
+    "style": ["sporty", "minimal"]
   }
 ]
