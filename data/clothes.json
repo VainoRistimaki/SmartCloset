@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "schemaVersion": "2.0",
+    "lastUpdated": "2025-11-15",
+    "description": "Refactored cloth catalog with canonical items plus a few useful lookup indexes."
+  },
+  "items": [
+    {
+      "id": 1,
+      "name": "Black Coat",
+      "type": "outer",
+      "thickness": 4,
+      "color": "black",
+      "formality": ["formal"],
+      "seasons": ["fall", "winter"],
+      "notes": "Structured wool coat that layers cleanly over office outfits."
+    },
+    {
+      "id": 2,
+      "name": "White Puffer Jacket",
+      "type": "outer",
+      "thickness": 5,
+      "color": "white",
+      "formality": ["casual"],
+      "seasons": ["winter"],
+      "notes": "Long puffer built for freezing commutes and windy walks."
+    },
+    {
+      "id": 3,
+      "name": "Sky Blue Knit",
+      "type": "top",
+      "thickness": 3,
+      "color": "skyblue",
+      "formality": ["casual", "formal"],
+      "seasons": ["spring", "fall", "winter"],
+      "notes": "Soft knit that balances denim for weekends or slacks for work."
+    },
+    {
+      "id": 4,
+      "name": "Pink Knit",
+      "type": "top",
+      "thickness": 3,
+      "color": "pink",
+      "formality": ["casual", "formal"],
+      "seasons": ["spring", "fall", "winter"],
+      "notes": "Playful knit that still works with tailored trousers or skirts."
+    },
+    {
+      "id": 5,
+      "name": "White Blouse",
+      "type": "top",
+      "thickness": 1,
+      "color": "white",
+      "formality": ["formal"],
+      "seasons": ["spring", "summer", "fall"],
+      "notes": "Crisp blouse that completes suiting sets or elevated skirts."
+    },
+    {
+      "id": 6,
+      "name": "Beige Sweatshirt",
+      "type": "top",
+      "thickness": 2,
+      "color": "beige",
+      "formality": ["casual"],
+      "seasons": ["spring", "fall", "winter"],
+      "notes": "Cozy crewneck for relaxed errand outfits or lounge layers."
+    },
+    {
+      "id": 7,
+      "name": "White Short-Sleeve Tee",
+      "type": "top",
+      "thickness": 1,
+      "color": "white",
+      "formality": ["casual"],
+      "seasons": ["spring", "summer"],
+      "notes": "Classic base layer to pair with denim, shorts, or skirts."
+    },
+    {
+      "id": 8,
+      "name": "Grey Short-Sleeve Tee",
+      "type": "top",
+      "thickness": 1,
+      "color": "grey",
+      "formality": ["casual"],
+      "seasons": ["spring", "summer"],
+      "notes": "Neutral tee that complements muted or monochrome looks."
+    },
+    {
+      "id": 9,
+      "name": "Black Bootcut Pants",
+      "type": "bottom",
+      "thickness": 2,
+      "color": "black",
+      "formality": ["casual", "formal"],
+      "seasons": ["spring", "fall", "winter"],
+      "notes": "Tailored bootcut pants that strike a balance between polish and comfort."
+    },
+    {
+      "id": 10,
+      "name": "Gray Sweatpants",
+      "type": "bottom",
+      "thickness": 2,
+      "color": "gray",
+      "formality": ["casual"],
+      "seasons": ["fall", "winter"],
+      "notes": "Relaxed sweatpants for lounging or athleisure commutes."
+    },
+    {
+      "id": 11,
+      "name": "Black Pleated Skirt",
+      "type": "bottom",
+      "thickness": 2,
+      "color": "black",
+      "formality": ["casual", "formal"],
+      "seasons": ["spring", "summer", "fall"],
+      "notes": "Flowy pleated skirt that dresses up or down with minimal effort."
+    },
+    {
+      "id": 12,
+      "name": "Blue Jeans",
+      "type": "bottom",
+      "thickness": 2,
+      "color": "blue",
+      "formality": ["casual"],
+      "seasons": ["spring", "fall", "winter"],
+      "notes": "Mid-wash denim that grounds almost any off-duty combo."
+    }
+  ],
+  "indexes": {
+    "byType": {
+      "outer": [1, 2],
+      "top": [3, 4, 5, 6, 7, 8],
+      "bottom": [9, 10, 11, 12]
+    },
+    "byFormality": {
+      "casual": [2, 3, 4, 6, 7, 8, 9, 10, 11, 12],
+      "formal": [1, 3, 4, 5, 9, 11]
+    },
+    "bySeason": {
+      "spring": [3, 4, 5, 6, 7, 8, 9, 11, 12],
+      "summer": [5, 7, 8, 11],
+      "fall": [1, 3, 4, 5, 6, 9, 10, 11, 12],
+      "winter": [1, 2, 3, 4, 6, 9, 10, 12]
+    }
+  }
+}

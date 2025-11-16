@@ -1,68 +1,3 @@
-﻿<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Audio API를 사용한 오디오 녹음</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      padding: 24px;
-      line-height: 1.5;
-    }
-
-    button {
-      padding: 10px 18px;
-      margin-right: 10px;
-      border-radius: 6px;
-      border: 1px solid #888;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    #audioElement {
-      display: block;
-      margin-top: 20px;
-      width: 100%;
-    }
-
-    #statusText {
-      margin-top: 16px;
-      color: #333;
-    }
-
-    #downloadLink {
-      display: inline-block;
-      margin-top: 12px;
-    }
-
-    #dirStatus {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
-</head>
-<body>
-  <button id="startButton">녹음 시작</button>
-  <button id="stopButton" disabled>녹음 중지</button>
-  <button id="dirButton" type="button">저장 폴더 선택</button>
-  <audio id="audioElement" controls></audio>
-  <p id="dirStatus">목표 폴더: C:\dev\SmartCloset (브라우저에서 직접 지정해 주세요)</p>
-  <p id="statusText" aria-live="polite">대기 중</p>
-  <a id="downloadLink" class="hidden" download="my_record.mp3">my_record.mp3 다운로드</a>
-
-  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
-<script>
 let audioContext = null;
 let processorNode = null;
 let sourceNode = null;
@@ -89,7 +24,7 @@ startButton.addEventListener('click', startRecording);
 stopButton.addEventListener('click', stopRecording);
 dirButton.addEventListener('click', selectDirectoryForSaving);
 
-// ----- 녹음 시작 -----
+// ----- Start recording -----
 async function startRecording() {
   if (isRecording) return;
 
@@ -119,18 +54,18 @@ async function startRecording() {
     stopButton.disabled = false;
     downloadLink.classList.add('hidden');
     revokeAudioURL();
-    updateStatus('녹음 중...');
+    updateStatus('Recording...');
     isRecording = true;
   } catch (error) {
-    console.error('마이크 접근 에러:', error);
-    updateStatus('마이크 권한을 확인해 주세요.');
+    console.error('Microphone access error:', error);
+    updateStatus('Please check microphone permissions.');
     await cleanupAudioGraph();
     startButton.disabled = false;
     stopButton.disabled = true;
   }
 }
 
-// ----- 녹음 중지 + MP3 저장 -----
+// ----- Stop recording + save MP3 -----
 async function stopRecording() {
   if (!isRecording) return;
 
@@ -141,20 +76,20 @@ async function stopRecording() {
 
   const bufferLength = recordedChunks.reduce((sum, chunk) => sum + chunk.length, 0);
   if (bufferLength === 0) {
-    updateStatus('녹음된 데이터가 없습니다. 다시 시도해 주세요.');
+    updateStatus('No audio was captured. Please try again.');
     startButton.disabled = false;
     stopButton.disabled = true;
     return;
   }
 
-  updateStatus('MP3 변환 중...');
+  updateStatus('Converting to MP3...');
   let mp3Blob;
   try {
     const mergedBuffer = mergeFloat32Arrays(recordedChunks, bufferLength);
     mp3Blob = encodeMp3(mergedBuffer, audioSampleRate);
   } catch (error) {
-    console.error('MP3 인코딩 실패:', error);
-    updateStatus('MP3 인코딩에 실패했습니다. 콘솔을 확인해 주세요.');
+    console.error('MP3 encoding failed:', error);
+    updateStatus('Failed to encode MP3. Check the console for details.');
     startButton.disabled = false;
     stopButton.disabled = true;
     return;
@@ -163,13 +98,13 @@ async function stopRecording() {
   currentAudioURL = URL.createObjectURL(mp3Blob);
   audioElement.src = currentAudioURL;
   audioElement.play().catch(() => {
-    // 자동 재생 실패 시 사용자에게 버튼을 누르게 둔다.
+    // If autoplay fails, let the user click the button.
   });
 
   downloadLink.href = currentAudioURL;
   downloadLink.classList.remove('hidden');
   downloadLink.download = MP3_FILENAME;
-  downloadLink.textContent = `${MP3_FILENAME} 다시 저장`;
+  downloadLink.textContent = `Save ${MP3_FILENAME} again`;
 
   startButton.disabled = false;
   stopButton.disabled = true;
@@ -223,7 +158,7 @@ function mergeFloat32Arrays(chunks, totalLength) {
 
 function encodeMp3(samples, sampleRate) {
   if (!window.lamejs) {
-    throw new Error('lamejs 라이브러리가 로드되지 않았습니다.');
+    throw new Error('The lamejs library was not loaded.');
   }
 
   const Mp3Encoder = window.lamejs.Mp3Encoder;
@@ -259,7 +194,7 @@ function floatTo16BitPCM(floatSamples) {
 
 async function selectDirectoryForSaving() {
   if (!window.showDirectoryPicker) {
-    updateDirStatus('브라우저가 디렉토리 선택을 지원하지 않습니다.', true);
+    updateDirStatus('This browser does not support choosing directories.', true);
     return;
   }
 
@@ -267,19 +202,19 @@ async function selectDirectoryForSaving() {
     const handle = await window.showDirectoryPicker();
     const hasPermission = await verifyDirPermission(handle);
     if (!hasPermission) {
-      updateDirStatus('폴더 권한을 허용해야 저장할 수 있습니다.', true);
+      updateDirStatus('Folder permission is required to save.', true);
       return;
     }
 
     targetDirectoryHandle = handle;
-    updateDirStatus(`선택된 폴더: ${handle.name} (C:\\dev\\SmartCloset를 선택하면 바로 저장됩니다.)`);
+    updateDirStatus(`Selected folder: ${handle.name} (Choose C:\\dev\\SmartCloset to save automatically.)`);
   } catch (error) {
     if (error.name === 'AbortError') {
-      updateDirStatus('폴더 선택이 취소되었습니다.', true);
+      updateDirStatus('Folder selection was canceled.', true);
       return;
     }
-    console.error('폴더 선택 실패:', error);
-    updateDirStatus('폴더 선택 중 오류가 발생했습니다.', true);
+    console.error('Folder selection failed:', error);
+    updateDirStatus('An error occurred while selecting the folder.', true);
   }
 }
 
@@ -307,12 +242,12 @@ async function saveMp3File(blob) {
       const allowed = await verifyDirPermission(targetDirectoryHandle);
       if (allowed) {
         await writeFileToDirectory(targetDirectoryHandle, blob);
-        updateStatus(`${MP3_FILENAME} 파일이 선택한 폴더(C:\\dev\\SmartCloset 권장)에 저장되었습니다.`);
+        updateStatus(`${MP3_FILENAME} was saved to the selected folder (C:\\dev\\SmartCloset recommended).`);
         return;
       }
     } catch (error) {
-      console.error('선택 폴더에 저장 실패:', error);
-      updateStatus('선택한 폴더에 저장하지 못했습니다. 파일 선택 대화상자를 사용합니다.');
+      console.error('Failed to save to the chosen folder:', error);
+      updateStatus('Could not save to the selected folder. Falling back to the file picker.');
     }
   }
 
@@ -330,19 +265,19 @@ async function saveMp3File(blob) {
       const writable = await handle.createWritable();
       await writable.write(blob);
       await writable.close();
-      updateStatus(`${MP3_FILENAME} 저장이 완료되었습니다.`);
+      updateStatus(`${MP3_FILENAME} has been saved.`);
       return;
     } catch (error) {
       if (error.name === 'AbortError') {
-        updateStatus('파일 저장이 취소되었습니다. 링크로 직접 다운로드할 수 있습니다.');
+        updateStatus('File save was canceled. You can download directly via the link.');
         return;
       }
-      console.error('파일 저장 실패:', error);
+      console.error('File save failed:', error);
     }
   }
 
   triggerDownload(blob);
-  updateStatus(`${MP3_FILENAME} 파일을 다운로드했습니다.`);
+  updateStatus(`${MP3_FILENAME} was downloaded.`);
 }
 
 function triggerDownload(blob) {
@@ -369,13 +304,10 @@ function updateStatus(message) {
 }
 
 function updateDirStatus(message, isError = false) {
-  dirStatus.textContent = `${message} (추천 경로: ${PREFERRED_DIRECTORY})`;
+  dirStatus.textContent = `${message} (Recommended path: ${PREFERRED_DIRECTORY})`;
   dirStatus.style.color = isError ? '#c0392b' : '#555';
 }
 
-updateDirStatus('브라우저에서 C:\\dev\\SmartCloset 디렉토리를 선택하면 자동 저장됩니다.');
+updateDirStatus('Select the C:\\dev\\SmartCloset directory in your browser to save automatically.');
 
 window.addEventListener('beforeunload', revokeAudioURL);
-</script>
-</body>
-</html>
