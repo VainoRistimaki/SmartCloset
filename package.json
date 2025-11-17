@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "fs": "^0.0.1-security",
+    "groq-sdk": "^0.35.0",
+    "node-record-lpcm16": "^1.0.1",
+    "openai": "^6.9.0",
+    "whisper-speech-to-text": "^1.0.3"
+  }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Record Audio with the Web Audio API</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin-right: 10px;
+      border-radius: 6px;
+      border: 1px solid #888;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #audioElement {
+      display: block;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    #statusText {
+      margin-top: 16px;
+      color: #333;
+    }
+
+    #downloadLink {
+      display: inline-block;
+      margin-top: 12px;
+    }
+
+    #dirStatus {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <button id="startButton">Start Recording</button>
+  <button id="stopButton" disabled>Stop Recording</button>
+  <button id="dirButton" type="button">Choose Save Folder</button>
+  <audio id="audioElement" controls></audio>
+  <p id="dirStatus">Target folder: C:\dev\SmartCloset (please select it directly in the browser)</p>
+  <p id="statusText" aria-live="polite">Idle</p>
+  <a id="downloadLink" class="hidden" download="my_record.mp3">Download my_record.mp3</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
+  <script src="../src/utils/mic_input.js"></script>
+
+</body>
+</html>
