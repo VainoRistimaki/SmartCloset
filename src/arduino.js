@@ -9,17 +9,25 @@ class hanger {
 }
 
 const hangers = [
-    new hanger(0, 10000),
-    new hanger(1, 20000),
-    new hanger(2, 30000),
-    new hanger(3, 40000),
-    new hanger(4, 50000),
-    new hanger(5, 60000),
+    new hanger(0, 10),
+    new hanger(1, 47),
+    new hanger(2, 100),
+    new hanger(3, 220),
+    new hanger(4, 330),
+    new hanger(5, 470),
+    new hanger(6, 680),
+    new hanger(7, 1000),
+    new hanger(8, 2200),
+    new hanger(9, 3300),
+    new hanger(10, 4700),
+    new hanger(11, 10000),
 ]
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 class Arduino {
+
+    //readPins = []
 
     constructor(id, port) {
         this.id = id;
@@ -29,7 +37,7 @@ class Arduino {
         this.readPins = []
         this.writePins = [3, 5, 6, 9, 10, 11]
         this.hangers = [null, null, null, null, null, null];
-        this.resistor = 10000
+        this.resistor = 220
 
         this.pinsResistances = [0, 0, 0, 0, 0, 0];
 
@@ -37,24 +45,33 @@ class Arduino {
     }
 
     async initialize() {
-        this.board.on('ready', async function () {
+        this.board.on('ready', async () => {
             // Initialize analog read pins A0 to A5
             for (let i = 0; i < 6; i++) {
                 this.readPins.push(new Pin("A" + i))
             };
             // Initialize write pins 3,5,6,9,10,11
-            this.writePins.map(pinNum => {
-                return new Pin(pinNum);
-            });
+            this.writePins = this.writePins.map(pinNum => new Pin(pinNum));
             // Set the board as ready
             this.ready = true;
             console.log(`Arduino board ${this.id} is ready on port ${this.port}`);
             
+            /*
             // Check pins every second
-            setInterval(() => {
-                this.checkPins();
-            }, 1000);
+            setInterval(async () => {
+                await this.checkPins();
+            }, 8000);
+            */
+
+            this.pollingLoop();
         })
+    }
+
+    async pollingLoop() {
+        while (true) {
+            await this.checkPins();
+            await delay(5000);
+        }
     }
 
     // Check a specific pin
@@ -62,17 +79,20 @@ class Arduino {
         if (this.ready) {
             // Query the pin for its current value
             this.writePins[id].high();
-
-            delay(10);
+            
+            await delay(20);
 
             this.readPins[id].query((state) => {
 
-                if (state.value < 0.001) {
+                const resistance = this.calculateResistance(state.value * (5.0 / 1023.0));
+                //console.log("Pin" + id + " Resistance: " + resistance);
+
+                if (state.value < 10) {
                     this.hangers[id] = null;
                 }
 
                 else {
-                    const resistance = this.calculateResistance(state.value);
+                    const resistance = this.calculateResistance(state.value * (5.0 / 1023.0));
                     
                     // Find the hanger with the closest resistor value
                     let bestMatch = null;
@@ -89,7 +109,6 @@ class Arduino {
                     this.pinsResistances[id] = resistance;
 
                 }
-
             });
 
             this.writePins[id].low();
@@ -98,15 +117,22 @@ class Arduino {
 
     // Check all pins
     async checkPins() {
-        for (let i = 0; i < this.readPins.length; i++) {
-            await this.checkPin(i);
+        let index = 0;
+        while (index < this.readPins.length) {
+            await this.checkPin(index);
+            index++;
         }
+        console.log(this.hangers);
     }
 
     // Calculate resistance from voltage
     calculateResistance(voltage) {
-        const v = 5;
-        return (this.resistor * (v - voltage)) / voltage;
+        //Green led drop
+        const ledDrop = 2.2;
+        const v = 5.0 - ledDrop;
+        const resistance = this.resistor * ((v / voltage) - 1)
+        //console.log("voltage: " , voltage)
+        return (resistance);
     }
 
 // lights up the pin with the right index on the arduino
@@ -132,11 +158,8 @@ class Arduino {
     }
 
     //gives the pin index of the hanger present
-    hangerToPin(hangerID){
-        const pinIndex = this.hangers.findIndex(hanger => {
-            hanger.id == hangerID
-        })
-        return pinIndex
+    hangerToPin(hangerID) {
+        return this.hangers.findIndex(h => h && h.id === hangerID);
     }
 
 // lights up the hanger containing the chosen cloth via the right pin
@@ -156,10 +179,27 @@ class Arduino {
 
 const arduino = new Arduino(1, "/dev/tty.usbmodem1101");
 
+
+
+//arduino.writePins[0].high();
+
+
+/*
 while (true) {
-    await delay(5000);
-    console.log(arduino.pinsResistances);
+    await delay(1000);
+    arduino.writePins[0].high();
+    await delay(1000);
+
+    arduino.readPins[0].query((state) => {
+        const resistance = arduino.calculateResistance(state.value * (5.0 / 1023.0));
+        console.log("Pin" + 0 + " Resistance: " + resistance);
+    })
+    arduino.writePins[0].low();
+    
+    //await arduino.checkPin(0);
+    //console.log(arduino.pinsResistances[0])
 }
+    */
 
 
 
