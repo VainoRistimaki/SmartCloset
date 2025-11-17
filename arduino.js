@@ -31,18 +31,21 @@ class Arduino {
         this.hangers = [null, null, null, null, null, null];
         this.resistor = 10000
 
+        this.pinsResistances = [0, 0, 0, 0, 0, 0];
+
         this.initialize();
     }
 
     async initialize() {
         this.board.on('ready', async function () {
-            // Initialize analog pins A1 to A6
+            // Initialize analog read pins A0 to A5
             for (let i = 0; i < 6; i++) {
                 this.readPins.push(new Pin("A" + i))
-            }
+            };
+            // Initialize write pins 3,5,6,9,10,11
             this.writePins.map(pinNum => {
                 return new Pin(pinNum);
-            })
+            });
             // Set the board as ready
             this.ready = true;
             console.log(`Arduino board ${this.id} is ready on port ${this.port}`);
@@ -83,6 +86,7 @@ class Arduino {
                     }
 
                     this.hangers[id] = bestMatch;
+                    this.pinsResistances[id] = resistance;
 
                 }
 
@@ -148,5 +152,16 @@ class Arduino {
     }
 
 }
+
+
+const arduino = new Arduino(1, "/dev/tty.usbmodem1101");
+
+while (true) {
+    await delay(5000);
+    console.log(arduino.pinsResistances);
+}
+
+
+
 
 export default Arduino;
