@@ -39,7 +39,7 @@ export async function buildPrompt() {
     clothData.forEach((item, index) => {
         prompt += `${index + 1}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
     });
-    prompt += `\nBased on the above information, suggest a suitable outfit for today.`;
+    prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in warmth_reason instead of ignoring thickness.`;
 
     return prompt;
 }
