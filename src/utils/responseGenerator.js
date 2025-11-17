@@ -16,15 +16,35 @@ export async function getClothesRecommendation(userInput="What should I wear tod
     const prompt = await buildPrompt();
 
     const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: [
-        { role: "system", content: "You respond ONLY with valid JSON. \
-          Each cloth items are in { id: number, name: string } format. \
-          Reply Several options. Clothes Recommendation Set 1, 2, 3, ...\n\
-          Each set should contain sole set. Do not contain alternative option. \
-          List at least 2 sets. \
-          Consider thickness data to match weather condition. \
-          After clothes recommendation, add explanation of the list." },
+        {
+          role: "system",
+          content: `
+You respond ONLY with valid JSON.
+Outline:
+  1) Derive a target warmth level from weather:
+     - feelslike ≤5°C -> warmth 5 (heavy outer, insulating mid, base)
+     - 6-12°C -> warmth 4 (warm outer or layered mid+base)
+     - 13-18°C -> warmth 3 (mid layer + base)
+     - 19-24°C -> warmth 2 (light layer or breathable base)
+     - ≥25°C -> warmth 1 (lightest, breathable)
+     Increase warmth by 1 if wind_kph >20 or precip_mm >0.
+  2) Each set must hit the target warmth using available items’ Thickness (lightweight < medium < heavyweight); layer to reach target when needed.
+  3) No alternatives inside a set. Output 2-3 sets.
+JSON shape:
+{
+  "sets": [
+    {
+      "name": "Set 1",
+      "items": [ { "id": number, "name": string } ],
+      "warmth_reason": "Why thickness matches weather, incl. key weather factors"
+    }
+  ]
+}
+No extra text outside JSON.
+          `,
+        },
         { role: "developer", content: prompt },
         { role: "user", content: userInput }
       ],
