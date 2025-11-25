@@ -25,14 +25,15 @@ const hangers = [
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function postData(data) {
+async function postData(data, id) {
     const response = await fetch('http://localhost:3000', {
         method: 'POST',
         headers: {
         'content-type': 'application/json',
         },
         body: JSON.stringify({
-            hangers: data
+            hangers: data,
+            arduinoID: id
         }),
     });
 
@@ -87,7 +88,7 @@ class Arduino {
     async pollingLoop() {
         while (true) {
             await this.checkPins();
-            await delay(500);
+            await delay(200);
         }
     }
 
@@ -97,7 +98,7 @@ class Arduino {
             // Query the pin for its current value
             this.writePins[id].high();
             
-            await delay(50);
+            await delay(20);
 
             this.readPins[id].query((state) => {
 
@@ -141,7 +142,7 @@ class Arduino {
         }
         const data = this.hangers.map(h => h ? 1 : 0)
         console.log(this.hangers);
-        await postData(data);
+        await postData(data, this.id);
     }
 
     // Calculate resistance from voltage
@@ -190,11 +191,10 @@ class Arduino {
         const pinIndex = this.hangerToPin(hangerID)
         this.closePin(pinIndex)
     }
-
 }
 
 
-const arduino = new Arduino(1, "/dev/tty.usbmodem11101");
+const arduino = new Arduino(1, "/dev/tty.usbmodem1101");
 
 
 
