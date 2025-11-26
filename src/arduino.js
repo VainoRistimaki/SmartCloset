@@ -39,6 +39,8 @@ async function postData(data, id) {
 
 }
 
+
+
 class Arduino {
 
     //readPins = []
@@ -54,6 +56,7 @@ class Arduino {
         this.resistor = 220
 
         this.pinsResistances = [0, 0, 0, 0, 0, 0];
+        this.lightStatus = [0, 0, 0, 0, 0, 0];
 
         
         this.initialize();
@@ -153,50 +156,53 @@ class Arduino {
         return (resistance);
     }
 
-// lights up the pin with the right index on the arduino
-    lightPin(index) {
-        if (this.ready) {
-            this.writePins[index].high()
-        } 
-    }
-// closes a pin (and light) 
-    closePin(index) {
-        if (this.ready) {
-            this.writePins[index].low()
-        }
+    lightHanger(hangerID){
+        const pin = this.hangerToPin(hangerID)
+        if (pin)
+        {this.lightStatus[pin] = 1}
+        //await postData(this.lightStatus, this.id)
     }
 
-    //closes all pins
-    closeAllPins() {
-        if (this.ready) {
-            for (const pin of this.writePins) {
-                pin.low()
-            }
+     hangerOff(hangerID){
+        const pin = this.hangerToPin(hangerID)
+        if (pin)
+        {this.lightStatus[pin]=0}
+    //await postData(this.lightStatus, this.id)
+    }   
+
+    async lightManyHangers(hangerIDs){
+        this.lightStatus = [0,0,0,0,0,0]
+        for(const id of hangerIDs) {
+            this.lightHanger(id)
         }
+        await postData(this.lightStatus, this.id)
     }
 
     //gives the pin index of the hanger present
     hangerToPin(hangerID) {
         return this.hangers.findIndex(h => h && h.id === hangerID);
     }
+}
 
 // lights up the hanger containing the chosen cloth via the right pin
-    lightHanger(hangerID) {
-        const pinIndex = this.hangerToPin(hangerID)
-        this.lightPin(pinIndex)
-    }
+    // lightHanger(hangerID) {
+    //     const pinIndex = this.hangerToPin(hangerID)
+    //     this.lightPin(pinIndex)
+    // }
 
-    //closes led in hanger
-    closeHanger(hangerID) {
-        const pinIndex = this.hangerToPin(hangerID)
-        this.closePin(pinIndex)
-    }
-}
+ 
 
 
 const arduino = new Arduino(1, "/dev/tty.usbmodem1101");
+//const arduino2 = new Arduino(2, PORT)
 
+const arduinos = [arduino] //, arduino2]
 
+function lightHangers(indexes) {
+    for (const arduino of arduinos) {
+        arduino.lightManyHangers(indexes)
+    }
+}
 
 //arduino.writePins[0].high();
 

@@ -49,6 +49,18 @@ board.on("ready", function() {
 app.use(cors());
 app.use(express.json());
 
+function lightHanger(i){
+        for (let j = 0; j < hangerLength; j++) {
+            const color = "#00ffff"
+            thisStrip.pixel(i * hangerLength + j).color(color);
+        }}
+        
+function hangerOff(i) {
+    for (let j = 0; j < hangerLength; j++) {
+        thisStrip.pixel(i * hangerLength + j).off();
+     }}
+
+
 app.post('/', async (req, res) => {
   const body = req.body;
   const theseHangers = body.hangers;
@@ -64,23 +76,14 @@ app.post('/', async (req, res) => {
     if (ready && thisStrip) {
         //thisStrip.off()
         for (let i = 0; i < hangers.length; i++) {
-            const hangerState = hangers[i];
-            if (hangerState != 0) {
-                for (let j = 0; j < hangerLength; j++) {
-                    const color = "#00ffff"
-                    thisStrip.pixel(i * hangerLength + j).color(color);
-                }
-                //const color = "#00ffff"
-                //thisStrip.pixel(i).color(color);
-                //thisStrip.pixel(i).show();
-            }
+         const hangerState = hangers[i]
+         if (hangerState != 0 ) {
+            lightHanger(i)
+         } 
+         else {hangerOff(i)}
 
-            else {
-                for (let j = 0; j < hangerLength; j++) {
-                    thisStrip.pixel(i * hangerLength + j).off();
-                }
-            }
         }
+        
         thisStrip.show();
     }
 
