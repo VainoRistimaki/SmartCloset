@@ -1,8 +1,24 @@
 import { readFile } from 'node:fs/promises';
+import { get } from 'node:http';
 
 const CLOTH_DATA_FILE = new URL('../../data/clothes.json', import.meta.url);
 
-export async function getClothData() {
+class ClothesData{
+    constructor(item){
+        this.id = item.id;
+        this.name = item.name;
+        this.type = item.type;
+        this.thickness = item.thickness;
+        this.seasons = item.seasons;
+        this.color = item.color;
+        this.formality = item.formality;
+        this.style = item.style;
+        this.note = item.note;
+        this.available = true;
+    }
+}
+
+async function getClothData() {
     try {
         const raw = await readFile(CLOTH_DATA_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
@@ -21,3 +37,12 @@ export async function getClothData() {
         throw error;
     }
 }
+
+async function genClothObjects(){
+    const rawClothData = await getClothData();
+    return rawClothData.map(item => new ClothesData(item));
+}
+
+// console.log(await genClothObjects());
+
+export { getClothData, genClothObjects };
