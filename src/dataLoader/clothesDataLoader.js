@@ -1,7 +1,18 @@
 import { readFile } from 'node:fs/promises';
-import { get } from 'node:http';
 
 const CLOTH_DATA_FILE = new URL('../../data/clothes.json', import.meta.url);
+
+function normalizeAvailability(value) {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        return value.toLowerCase() === 'true';
+    }
+
+    return value === undefined ? true : Boolean(value);
+}
 
 class ClothesData{
     constructor(item){
@@ -13,8 +24,8 @@ class ClothesData{
         this.color = item.color;
         this.formality = item.formality;
         this.style = item.style;
-        this.note = item.note;
-        this.available = true;
+        this.note = item.note ?? item.notes;
+        this.available = normalizeAvailability(item.availability ?? item.available);
     }
 }
 
@@ -38,11 +49,13 @@ async function getClothData() {
     }
 }
 
-async function genClothObjects(){
+async function getClothesObjects(){
     const rawClothData = await getClothData();
     return rawClothData.map(item => new ClothesData(item));
 }
 
-// console.log(await genClothObjects());
+const genClothObjects = getClothesObjects;
 
-export { getClothData, genClothObjects };
+// console.log(await getClothesObjects());
+
+export { getClothData, getClothesObjects, genClothObjects };
