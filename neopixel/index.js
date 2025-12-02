@@ -6,7 +6,7 @@ pixel = require('node-pixel')
 const app = express();
 const PORT = 3000;
 
-let hangers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let hangers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 const opts = '/dev/tty.usbmodem11101';
  
@@ -14,7 +14,7 @@ var board = new five.Board(opts);
 var strip = null;
 
 var hangerLength = 5;
-var hangerAmount = 12;
+var hangerAmount = 10;
 
 var ready = false;
 var thisStrip = null;

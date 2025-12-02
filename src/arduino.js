@@ -19,8 +19,6 @@ const hangers = [
     new hanger(7, 1000),
     new hanger(8, 2200),
     new hanger(9, 3300),
-    new hanger(10, 4700),
-    new hanger(11, 10000),
 ]
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -51,12 +49,12 @@ class Arduino {
         this.board = new Board({ port: this.port, debug: true });
         this.ready = false;
         this.readPins = []
-        this.writePins = [3, 5, 6, 9, 10, 11]
-        this.hangers = [null, null, null, null, null, null];
+        this.writePins = [3, 5, 6, 9, 10]
+        this.hangers = [null, null, null, null, null];
         this.resistor = 220
 
-        this.pinsResistances = [0, 0, 0, 0, 0, 0];
-        this.lightStatus = [0, 0, 0, 0, 0, 0];
+        this.pinsResistances = [0, 0, 0, 0, 0];
+        this.lightStatus = [0, 0, 0, 0, 0];
 
         
         this.initialize();
@@ -66,7 +64,7 @@ class Arduino {
     async initialize() {
         this.board.on('ready', async () => {
             // Initialize analog read pins A0 to A5
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 5; i++) {
                 this.readPins.push(new Pin("A" + i))
             };
             // Initialize write pins 3,5,6,9,10,11
@@ -171,7 +169,7 @@ class Arduino {
     }   
 
     async lightManyHangers(hangerIDs){
-        this.lightStatus = [0,0,0,0,0,0]
+        this.lightStatus = [0,0,0,0,0]
         for(const id of hangerIDs) {
             this.lightHanger(id)
         }
