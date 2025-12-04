@@ -68,12 +68,7 @@ app.post('/', async (req, res) => {
 
   console.log("Received data from Arduino " + thisID + ": ", theseHangers); 
 
-  if (thisID == 1) {
-    hangers = [...theseHangers,  ...hangers.slice(theseHangers.length)]
-  }
-  else {
-    hangers = [...hangers.slice(0, hangerAmount - theseHangers.length), ...theseHangers]
-  }
+  hangers = theseHangers;
 
     if (ready && thisStrip) {
         //thisStrip.off()

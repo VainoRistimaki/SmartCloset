@@ -23,17 +23,16 @@ const hangers = [
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function postData(data, id) {
+async function postData(data) {
 
-    console.log("Sending data to server: ", data, id   )
+    console.log("Sending data to server: ", data   )
     const response = await fetch('http://localhost:3000', {
         method: 'POST',
         headers: {
         'content-type': 'application/json',
         },
         body: JSON.stringify({
-            hangers: data,
-            arduinoID: id
+            hangers: data
         }),
     });
 
@@ -139,7 +138,7 @@ class Arduino {
         }
         const data = this.hangers.map(h => h ? 1 : 0)
         console.log(this.hangers, this.id);
-        await postData(data, this.id);
+        //await postData(data, this.id);
     }
 
     // Calculate resistance from voltage
@@ -159,7 +158,8 @@ class Arduino {
 
     lightHanger(hangerID){
         const pin = this.hangerToPin(hangerID)
-        if (pin != -1 && pin)
+        console.log("Lighting hanger ", hangerID, " at pin ", pin)
+        if (pin != -1)
         {
             this.lightStatus[pin] = 1
             console.log("Lighting hanger ", hangerID)
@@ -176,6 +176,7 @@ class Arduino {
     }   
 
     async lightManyHangers(hangerIDs){
+        console.log("Lighting these hangers: ", hangerIDs)
         this.lightStatus = [0,0,0,0,0]
         for(const id of hangerIDs) {
             this.lightHanger(id)
@@ -186,7 +187,8 @@ class Arduino {
 
     //gives the pin index of the hanger present
     hangerToPin(hangerID) {
-        console.log("Finding pin for hanger ", this.hangers)
+        console.log("Finding pin for hanger ", this.hangers.findIndex(h => h && h.id === hangerID))
+
         return this.hangers.findIndex(h => h && h.id === hangerID);
     }
 }
@@ -301,13 +303,25 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 */
-/*
-function lightHangers(indexes) {
+
+async function lightHangers(indexes) {
+    const data = []
+    
     for (const arduino of arduinos) {
         arduino.lightManyHangers(indexes)
+        data.push(...arduino.lightStatus)
     }
+
+    await postData(data);
 }
-    */
+
+function returnHangers() {
+    const data = []
+    for (const arduino of arduinos) {
+        data.push(...arduino.hangers)
+    }
+    return data;
+}
 
 //arduino.writePins[0].high();
 
@@ -330,6 +344,4 @@ while (true) {
     */
 
 
-
-
-export default Arduino;
+export {lightHangers, returnHangers}
