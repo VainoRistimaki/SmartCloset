@@ -1,5 +1,5 @@
 import five from 'johnny-five';
-const { Board, Led, Pin } = five;
+const { Boards, Led, Pin } = five;
 
 class hanger {
     constructor(id, resistor) {
@@ -9,23 +9,23 @@ class hanger {
 }
 
 const hangers = [
-    new hanger(0, 10),
-    new hanger(1, 47),
-    new hanger(2, 100),
-    new hanger(3, 220),
-    new hanger(4, 330),
-    new hanger(5, 470),
-    new hanger(6, 680),
-    new hanger(7, 1000),
-    new hanger(8, 2200),
-    new hanger(9, 3300),
-    new hanger(10, 4700),
-    new hanger(11, 10000),
+    new hanger(0, 47),
+    new hanger(1, 100),
+    new hanger(2, 220),
+    new hanger(3, 330),
+    new hanger(4, 680),
+    new hanger(5, 1000),
+    new hanger(6, 2200),
+    new hanger(7, 3300),
+    new hanger(8, 4700),
+    new hanger(9, 10000),
 ]
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function postData(data, id) {
+
+    console.log("Sending data to server: ", data, id   )
     const response = await fetch('http://localhost:3000', {
         method: 'POST',
         headers: {
@@ -45,55 +45,45 @@ class Arduino {
 
     //readPins = []
 
-    constructor(id, port) {
+    constructor(id, board) {
         this.id = id;
-        this.port = port;
-        this.board = new Board({ port: this.port, debug: true });
+        this.board = board;
         this.ready = false;
         this.readPins = []
-        this.writePins = [3, 5, 6, 9, 10, 11]
-        this.hangers = [null, null, null, null, null, null];
+        this.writePins = [3, 5, 6, 9, 10];
+        this.hangers = [null, null, null, null, null];
         this.resistor = 220
 
-        this.pinsResistances = [0, 0, 0, 0, 0, 0];
-        this.lightStatus = [0, 0, 0, 0, 0, 0];
+        this.pinsResistances = [0, 0, 0, 0, 0];
+        this.lightStatus = [0, 0, 0, 0, 0];
 
         
-        this.initialize();
+        //this.initialize();
         
     }
 
-    async initialize() {
-        this.board.on('ready', async () => {
+    initialize() {
+
             // Initialize analog read pins A0 to A5
-            for (let i = 0; i < 6; i++) {
-                this.readPins.push(new Pin("A" + i))
-            };
-            // Initialize write pins 3,5,6,9,10,11
-            this.writePins = this.writePins.map(pinNum => new Pin(pinNum));
-            // Set the board as ready
-            this.ready = true;
-            console.log(`Arduino board ${this.id} is ready on port ${this.port}`);
-            
+        for (let i = 0; i < 5; i++) {
+            this.readPins.push(new Pin({pin: "A" + i, board: this.board}))
+        };
+        console.log("Hello")
+        // Initialize write pins 3,5,6,9,10,11
+        this.writePins = this.writePins.map(pinNum => new Pin({pin: pinNum, board: this.board}));
+        // Set the board as ready
+        this.ready = true;
             /*
             // Check pins every second
             setInterval(async () => {
                 await this.checkPins();
             }, 8000);
             */
+           //this.pollingLoop();
 
-            
-            this.pollingLoop();
-            
-        })
+           //this.lightManyHangers([8]);
     }
-
-    async pollingLoop() {
-        while (true) {
-            await this.checkPins();
-            await delay(200);
-        }
-    }
+        
 
     // Check a specific pin
     async checkPin(id) {
@@ -101,19 +91,21 @@ class Arduino {
             // Query the pin for its current value
             this.writePins[id].high();
             
-            await delay(20);
+            await delay(100);
 
             this.readPins[id].query((state) => {
 
-                const resistance = this.calculateResistance(state.value * (5.0 / 1023.0));
+                //console.log("Pin" + id + " Value: " + state.value);
+
+                const resistance = this.calculatePulldownResistance(state.value * (5.0 / 1023.0));
                 //console.log("Pin" + id + " Resistance: " + resistance);
 
-                if (state.value < 10) {
+                if (state.value > 1000) {
                     this.hangers[id] = null;
                 }
 
                 else {
-                    const resistance = this.calculateResistance(state.value * (5.0 / 1023.0));
+                    const resistance = this.calculatePulldownResistance(state.value * (5.0 / 1023.0));
                     
                     // Find the hanger with the closest resistor value
                     let bestMatch = null;
@@ -144,7 +136,7 @@ class Arduino {
             index++;
         }
         const data = this.hangers.map(h => h ? 1 : 0)
-        console.log(this.hangers);
+        console.log(this.hangers, this.id);
         await postData(data, this.id);
     }
 
@@ -156,16 +148,27 @@ class Arduino {
         return (resistance);
     }
 
+    //pulldownresistance
+    calculatePulldownResistance(voltage) {
+        const v = 5.0
+        const resistance = (voltage * this.resistor) / (v - voltage)
+        return (resistance);
+    }
+
     lightHanger(hangerID){
         const pin = this.hangerToPin(hangerID)
-        if (pin)
-        {this.lightStatus[pin] = 1}
+        if (pin != -1 && pin)
+        {
+            this.lightStatus[pin] = 1
+            console.log("Lighting hanger ", hangerID)
+        }
+
         //await postData(this.lightStatus, this.id)
     }
 
-     hangerOff(hangerID){
+    hangerOff(hangerID){
         const pin = this.hangerToPin(hangerID)
-        if (pin)
+        if (pin != -1 && pin)
         {this.lightStatus[pin]=0}
     //await postData(this.lightStatus, this.id)
     }   
@@ -175,11 +178,13 @@ class Arduino {
         for(const id of hangerIDs) {
             this.lightHanger(id)
         }
-        await postData(this.lightStatus, this.id)
+        console.log(this.lightStatus)
+        //await postData(this.lightStatus, this.id)
     }
 
     //gives the pin index of the hanger present
     hangerToPin(hangerID) {
+        console.log("Finding pin for hanger ", this.hangers)
         return this.hangers.findIndex(h => h && h.id === hangerID);
     }
 }
@@ -190,19 +195,117 @@ class Arduino {
     //     this.lightPin(pinIndex)
     // }
 
- 
+const boards = new Boards([
+  { id: 1, port: "/dev/tty.usbmodem11101" },
+  { id: 2, port: "/dev/tty.usbmodem11401" }
+]);
+
+//id of the first arduino
+let arduinos = []
+
+let nowReady = false;
 
 
-const arduino = new Arduino(1, "/dev/tty.usbmodem1101");
-//const arduino2 = new Arduino(2, PORT)
+boards.on("ready", async () => {
+    arduinos = [new Arduino(1, boards.byId(1)), new Arduino(2, boards.byId(2))];
+    arduinos.forEach(arduino => arduino.initialize());
+    nowReady = true;
+});
+/*
+setTimeout(() => {
+    if (arduino.ready && arduino2.ready) {
+        pins.push(...arduino.readPins);
+        pins.push(...arduino2.readPins);
+        console.log("All read pins:", pins);
+    }
+}, 10000);
+*/
 
-const arduinos = [arduino] //, arduino2]
 
+
+//const arduinos = [arduino, arduino2] //, arduino2]
+
+
+let current = 0;
+
+async function alternatingLoop() {
+
+
+
+    // Make sure both Arduinos are ready before starting
+    if (!nowReady) {
+        console.log("Waiting for Arduinos...");
+        return setTimeout(alternatingLoop, 500);
+    }
+    const board = arduinos[current];
+
+    console.log("Checking Arduino", board.id);
+    await board.checkPins();
+
+    current = (current + 1) % arduinos.length; // alternate 0→1→0→1
+
+    setTimeout(alternatingLoop, 500); // run again in 1 second
+}
+
+alternatingLoop();
+
+
+
+/*
+while (true) {
+    console.log("Checking all arduinos")
+    if (arduino.ready && arduino2.ready) {
+        for (const arduino of arduinos) {
+            console.log("Checking pins for arduino ", arduino.id)
+            await arduino.checkPins();
+            sleep(300);
+        }
+    }
+    
+    sleep(100)
+}
+    */
+
+/*
+function myLoop() {
+    setTimeout(async () => {
+        if (!arduino.ready || !arduino2.ready) {
+            console.log("Not ready yet...");
+            return myLoop(); // keep waiting
+        }
+
+        console.log("CHECK");
+
+        if (i % 2 === 0) {
+            console.log("Arduino 1 check");
+            await arduino.checkPins();
+        } else {
+            console.log("Arduino 2 check");
+            await arduino2.checkPins();
+        }
+
+        i++;
+        myLoop(); 
+    }, 300);
+}
+
+myLoop();  
+*/
+
+
+
+/*
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+*/
+/*
 function lightHangers(indexes) {
     for (const arduino of arduinos) {
         arduino.lightManyHangers(indexes)
     }
 }
+    */
 
 //arduino.writePins[0].high();
 

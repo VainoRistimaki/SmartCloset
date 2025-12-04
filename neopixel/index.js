@@ -6,15 +6,15 @@ pixel = require('node-pixel')
 const app = express();
 const PORT = 3000;
 
-let hangers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let hangers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-const opts = '/dev/tty.usbmodem11101';
+const opts = '/dev/tty.usbmodem1101';
  
 var board = new five.Board(opts);
 var strip = null;
 
 var hangerLength = 5;
-var hangerAmount = 12;
+var hangerAmount = 10;
 
 var ready = false;
 var thisStrip = null;
@@ -24,7 +24,7 @@ board.on("ready", function() {
     strip = new pixel.Strip({
         board: this,
         controller: "FIRMATA",
-        strips: [ {pin: 6, length: 60}, ], // this is preferred form for definition
+        strips: [ {pin: 6, length: 50}, ], // this is preferred form for definition
         gamma: 2.8, // set to a gamma that works nicely for WS2812
     });
  
@@ -65,6 +65,8 @@ app.post('/', async (req, res) => {
   const body = req.body;
   const theseHangers = body.hangers;
   const thisID = body.arduinoID;
+
+  console.log("Received data from Arduino " + thisID + ": ", theseHangers); 
 
   if (thisID == 1) {
     hangers = [...theseHangers,  ...hangers.slice(theseHangers.length)]
