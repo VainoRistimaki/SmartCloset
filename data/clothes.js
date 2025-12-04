@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": 0,
     "name": "Black Coat",
     "type": "outer",
     "thickness": 4,
@@ -9,7 +9,7 @@
     "style": ["chic", "minimal"]
   },
   {
-    "id": 2,
+    "id": 1,
     "name": "White Puffer Jacket",
     "type": "outer",
     "thickness": 5,
@@ -19,7 +19,7 @@
   },
 
   {
-    "id": 3,
+    "id": 2,
     "name": "Sky Blue Knit",
     "type": "top",
     "thickness": 3,
@@ -28,16 +28,7 @@
     "style": ["cute", "minimal"]
   },
   {
-    "id": 4,
-    "name": "Pink Knit",
-    "type": "top",
-    "thickness": 3,
-    "color": "pink",
-    "formality": ["casual", "formal"],
-    "style": ["feminine"]
-  },
-  {
-    "id": 5,
+    "id": 3,
     "name": "White Blouse",
     "type": "top",
     "thickness": 1,
@@ -46,8 +37,8 @@
     "style": ["feminine", "formal"]
   },
   {
-    "id": 6,
-    "name": "Beige Sweatshirt",
+    "id": 4,
+    "name": "Grey Sweatshirt",
     "type": "top",
     "thickness": 2,
     "color": "beige",
@@ -55,7 +46,7 @@
     "style": ["casual", "minimal"]
   },
   {
-    "id": 7,
+    "id": 5,
     "name": "Black Long-Sleeve Tee",
     "type": "top",
     "thickness": 2,
@@ -64,7 +55,7 @@
     "style": ["minimal", "sporty"]
   },
   {
-    "id": 8,
+    "id": 6,
     "name": "Red Cardigan",
     "type": "top",
     "thickness": 2,
@@ -74,7 +65,7 @@
   },
 
   {
-    "id": 9,
+    "id": 7,
     "name": "Black Bootcut Pants",
     "type": "bottom",
     "thickness": 2,
@@ -83,16 +74,7 @@
     "style": ["minimal", "feminine"]
   },
   {
-    "id": 10,
-    "name": "Gray Sweatpants",
-    "type": "bottom",
-    "thickness": 2,
-    "color": "gray",
-    "formality": "casual",
-    "style": ["sporty", "casual"]
-  },
-  {
-    "id": 11,
+    "id": 8,
     "name": "Black Pleated Skirt",
     "type": "bottom",
     "thickness": 1,
@@ -101,16 +83,7 @@
     "style": ["feminine"]
   },
   {
-    "id": 12,
-    "name": "Blue Jeans",
-    "type": "bottom",
-    "thickness": 2,
-    "color": "blue",
-    "formality": "casual",
-    "style": ["minimal", "casual"]
-  },
-  {
-    "id": 13,
+    "id": 9,
     "name": "Black Leggings",
     "type": "bottom",
     "thickness": 2,

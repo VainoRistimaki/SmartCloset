@@ -1,11 +1,11 @@
 import { getWeatherData } from '../dataLoader/weatherDataLoader.js';
 import { readPersonData } from '../dataLoader/personDataLoader.js';
-import { getClothData } from '../dataLoader/clothesDataLoader.js';
+import { getClothesObjects } from '../dataLoader/clothesDataLoader.js';
 
 export async function buildPrompt() {
     const personData = readPersonData();
     const weatherData = await getWeatherData(personData.location.city);
-    const clothData = await getClothData();
+    const clothData = await getClothesObjects();
     let prompt = `You are a fashion assistant. Based on the following information, suggest an outfit.\n\n`;
 
     prompt += `Person Profile:\n`;
@@ -36,9 +36,15 @@ export async function buildPrompt() {
     prompt += `- Precipitation: ${weatherData.precip_mm} mm\n\n`;
     
     prompt += `Available Clothes:\n`;
-    clothData.forEach((item, index) => {
-        prompt += `${index + 1}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
-    });
+    
+    // console.log(clothData[11])
+    // clothData[11].available = false;
+    // clothData[8].available = false;
+    clothData
+        .filter(item => (item.available ?? item.availability === "True"))
+        .forEach((item, index) => {
+            prompt += `${index + 1}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
+        });
     prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in warmth_reason instead of ignoring thickness.`;
 
     return prompt;

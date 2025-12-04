@@ -11,12 +11,20 @@ if (!apiKey) {
 
 const client = new OpenAI({ apiKey });
 
+function parseJsonContent(rawContent) {
+  // Some models occasionally wrap JSON in code fences; strip them before parsing.
+  const fencedMatch = rawContent.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const jsonString = fencedMatch ? fencedMatch[1].trim() : rawContent.trim();
+  return JSON.parse(jsonString);
+}
+
 export async function getClothesRecommendation(userInput="What should I wear today?") {
   try {
     const prompt = await buildPrompt();
 
     const response = await client.chat.completions.create({
       model: "gpt-4o",
+      response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
@@ -51,8 +59,8 @@ No extra text outside JSON.
       temperature: 0.4
     });
 
-    const raw = response.choices[0].message.content.trim();
-    const json = JSON.parse(raw);
+    const raw = response.choices[0].message.content || "";
+    const json = parseJsonContent(raw);
 
     return json; // ??[{ id: number, name: string }]
   } catch (err) {

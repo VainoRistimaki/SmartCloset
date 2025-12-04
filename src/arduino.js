@@ -56,6 +56,8 @@ class Arduino {
 
         this.pinsResistances = [0, 0, 0, 0, 0];
         this.lightStatus = [0, 0, 0, 0, 0];
+        this.pinsResistances = [0, 0, 0, 0, 0];
+        this.lightStatus = [0, 0, 0, 0, 0];
 
         
         //this.initialize();
@@ -174,7 +176,7 @@ class Arduino {
     }   
 
     async lightManyHangers(hangerIDs){
-        this.lightStatus = [0,0,0,0,0,0]
+        this.lightStatus = [0,0,0,0,0]
         for(const id of hangerIDs) {
             this.lightHanger(id)
         }
