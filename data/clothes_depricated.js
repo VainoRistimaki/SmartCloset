@@ -1,3 +1,4 @@
+/*
 {
   "metadata": {
     "schemaVersion": "2.0",
@@ -135,5 +136,32 @@
       "notes": "Relaxed sweatpants for lounging or athleisure commutes.",
       "resistance": 10000
     }
-  ]
+  ],
+  "indexes": {
+    "byType": {
+      "outer": [1, 2],
+      "top": [3, 4, 5, 6, 7, 8],
+      "bottom": [9, 10, 11, 12]
+    },
+    "byFormality": {
+      "casual": [2, 3, 4, 6, 7, 8, 9, 10, 11, 12],
+      "formal": [1, 3, 4, 5, 9, 11]
+    },
+    "bySeason": {
+      "spring": [3, 4, 5, 6, 7, 8, 9, 11, 12],
+      "summer": [5, 7, 8, 11],
+      "fall": [1, 3, 4, 5, 6, 9, 10, 11, 12],
+      "winter": [1, 2, 3, 4, 6, 9, 10, 12]
+    },
+    "byStyle": {
+      "casual": [2, 6, 8, 10, 12],
+      "chic": [1],
+      "cute": [3],
+      "feminine": [4, 5, 8, 9, 11],
+      "formal": [5],
+      "minimal": [1, 2, 3, 6, 7, 9, 12],
+      "sporty": [7, 10]
+    }
+  }
 }
+*/

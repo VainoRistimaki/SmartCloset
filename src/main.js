@@ -6,18 +6,16 @@ let hangers = [];
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
+await delay(10000);
+
 await selectClothes("I have to run marathon");
-
-
-//await delay(10000);
 //await lightHangers([1, 2, 3, 4, 5]);
 
 
 setInterval(async () => {
     hangers = returnHangers();
-    console.log("Current hangers state: ", hangers);
+    console.log("Current hangers state: ", hangers.map(h => h ? h.id : null));
 }, 1000);
-
 
 
 async function selectClothes(input) {

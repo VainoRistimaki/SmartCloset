@@ -5,7 +5,7 @@ import {getClothesObjects} from './dataLoader/clothesDataLoader.js';
 
 const hangers = await getClothesObjects();
 
-console.log(hangers);
+//console.log(hangers);
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -55,7 +55,7 @@ class Arduino {
         for (let i = 0; i < 5; i++) {
             this.readPins.push(new Pin({pin: "A" + i, board: this.board}))
         };
-        console.log("Hello")
+        //console.log("Hello")
         // Initialize write pins 3,5,6,9,10,11
         this.writePins = this.writePins.map(pinNum => new Pin({pin: pinNum, board: this.board}));
         // Set the board as ready
@@ -88,11 +88,13 @@ class Arduino {
                 //console.log("Pin" + id + " Resistance: " + resistance);
 
                 if (state.value > 1000) {
+                    this.pinsResistances[id] = null;
                     this.hangers[id] = null;
                 }
 
                 else {
                     const resistance = this.calculatePulldownResistance(state.value * (5.0 / 1023.0));
+                    
                     
                     // Find the hanger with the closest resistor value
                     let bestMatch = null;
@@ -104,10 +106,11 @@ class Arduino {
                             bestMatch = hanger;
                         }
                     }
+                        
 
                     this.hangers[id] = bestMatch;
                     this.pinsResistances[id] = resistance;
-
+                    //console.log("Hanger at pin " + id + ": ", bestMatch ? bestMatch.id : null, resistance);
                 }
             });
 
@@ -122,23 +125,49 @@ class Arduino {
             await this.checkPin(index);
             index++;
         }
-        const data = this.hangers.map(h => h ? 1 : 0)
-        console.log(this.hangers, this.id);
+
+       //this.hangers = this.sortHangersBasedOnPins(this.pinsResistances)
+
+        //const data = this.hangers.map(h => h ? 1 : 0)
+        //console.log(this.hangers.data, this.id);
         //await postData(data, this.id);
+    }
+
+    sortHangersBasedOnPins(PinResistances) {
+        const sortedHangers = [];
+
+        for (const resistance of PinResistances) {
+            let bestMatch = null;
+            let smallestDiff = Infinity;
+            let diff = Infinity;
+            for (const hanger of hangers) {
+                const diff = Math.abs(resistance - hanger.resistance);
+                if (diff < smallestDiff && sortedHangers.find(h => h.bestMatch == hanger) == undefined) {
+                    smallestDiff = diff;
+                    bestMatch = hanger;
+                }
+            }
+
+            sortedHangers.push({hanger: bestMatch, diff: diff});
+        }
+
+        return sortedHangers;
     }
 
     // Calculate resistance from voltage
     calculateResistance(voltage) {
         const v = 5.0
-        const resistance = this.resistance * ((v / voltage) - 1)
+        const resistance = this.resistor * ((v / voltage) - 1)
         //console.log("resistance: " , resistance)
         return (resistance);
     }
 
     //pulldownresistance
     calculatePulldownResistance(voltage) {
+        //console.log("Voltage: ", voltage)
         const v = 5.0
-        const resistance = (voltage * this.resistance) / (v - voltage)
+        const resistance = (voltage * this.resistor) / (v - voltage)
+        //console.log("resistance: " , resistance)
         return (resistance);
     }
 
@@ -167,13 +196,13 @@ class Arduino {
         for(const id of hangerIDs) {
             this.lightHanger(id)
         }
-        console.log(this.lightStatus)
+        //console.log(this.lightStatus)
         //await postData(this.lightStatus, this.id)
     }
 
     //gives the pin index of the hanger present
     hangerToPin(hangerID) {
-        console.log("Finding pin for hanger ", this.hangers.findIndex(h => h && h.id === hangerID))
+        //console.log("Finding pin for hanger ", this.hangers.findIndex(h => h && h.id === hangerID))
 
         return this.hangers.findIndex(h => h && h.id === hangerID);
     }
@@ -229,7 +258,7 @@ async function alternatingLoop() {
     }
     const board = arduinos[current];
 
-    console.log("Checking Arduino", board.id);
+    //console.log("Checking Arduino", board.id);
     await board.checkPins();
 
     current = (current + 1) % arduinos.length; // alternate 0→1→0→1
