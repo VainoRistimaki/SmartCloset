@@ -69,6 +69,7 @@ No extra text outside JSON.
   }
 }
 
+/*
 // Example usage:
 (async () => {
   const recommendation = await getClothesRecommendation();
@@ -79,3 +80,4 @@ No extra text outside JSON.
     console.log("Failed to fetch clothes recommendation.");
   }
 })();
+*/

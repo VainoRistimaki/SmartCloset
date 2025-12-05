@@ -1,25 +1,11 @@
 import five from 'johnny-five';
 const { Boards, Led, Pin } = five;
 
-class hanger {
-    constructor(id, resistor) {
-        this.id = id;
-        this.resistor = resistor;
-    }
-}
+import {getClothesObjects} from './dataLoader/clothesDataLoader.js';
 
-const hangers = [
-    new hanger(0, 47),
-    new hanger(1, 100),
-    new hanger(2, 220),
-    new hanger(3, 330),
-    new hanger(4, 680),
-    new hanger(5, 1000),
-    new hanger(6, 2200),
-    new hanger(7, 3300),
-    new hanger(8, 4700),
-    new hanger(9, 10000),
-]
+const hangers = await getClothesObjects();
+
+console.log(hangers);
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -112,7 +98,7 @@ class Arduino {
                     let bestMatch = null;
                     let smallestDiff = Infinity;
                     for (const hanger of hangers) {
-                        const diff = Math.abs(resistance - hanger.resistor);
+                        const diff = Math.abs(resistance - hanger.resistance);
                         if (diff < smallestDiff) {
                             smallestDiff = diff;
                             bestMatch = hanger;
@@ -144,7 +130,7 @@ class Arduino {
     // Calculate resistance from voltage
     calculateResistance(voltage) {
         const v = 5.0
-        const resistance = this.resistor * ((v / voltage) - 1)
+        const resistance = this.resistance * ((v / voltage) - 1)
         //console.log("resistance: " , resistance)
         return (resistance);
     }
@@ -152,7 +138,7 @@ class Arduino {
     //pulldownresistance
     calculatePulldownResistance(voltage) {
         const v = 5.0
-        const resistance = (voltage * this.resistor) / (v - voltage)
+        const resistance = (voltage * this.resistance) / (v - voltage)
         return (resistance);
     }
 

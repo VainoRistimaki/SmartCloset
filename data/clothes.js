@@ -6,7 +6,8 @@
     "thickness": 4,
     "color": "black",
     "formality": "formal",
-    "style": ["chic", "minimal"]
+    "style": ["chic", "minimal"],
+    "resistance": 47
   },
   {
     "id": 1,
@@ -15,7 +16,8 @@
     "thickness": 5,
     "color": "white",
     "formality": "casual",
-    "style": ["casual", "minimal"]
+    "style": ["casual", "minimal"],
+    "resistance": 100
   },
 
   {
@@ -25,7 +27,8 @@
     "thickness": 3,
     "color": "skyblue",
     "formality": ["casual", "formal"],
-    "style": ["cute", "minimal"]
+    "style": ["cute", "minimal"],
+    "resistance": 220
   },
   {
     "id": 3,
@@ -34,7 +37,8 @@
     "thickness": 1,
     "color": "white",
     "formality": "formal",
-    "style": ["feminine", "formal"]
+    "style": ["feminine", "formal"],
+    "resistance": 330
   },
   {
     "id": 4,
@@ -43,7 +47,8 @@
     "thickness": 2,
     "color": "beige",
     "formality": "casual",
-    "style": ["casual", "minimal"]
+    "style": ["casual", "minimal"],
+    "resistance": 680
   },
   {
     "id": 5,
@@ -52,7 +57,8 @@
     "thickness": 2,
     "color": "black",
     "formality": "casual",
-    "style": ["minimal", "sporty"]
+    "style": ["minimal", "sporty"],
+    "resistance": 1000
   },
   {
     "id": 6,
@@ -61,7 +67,8 @@
     "thickness": 2,
     "color": "red",
     "formality": "casual",
-    "style": ["casual", "feminine"]
+    "style": ["casual", "feminine"],
+    "resistance": 2200
   },
 
   {
@@ -71,7 +78,8 @@
     "thickness": 2,
     "color": "black",
     "formality": ["casual", "formal"],
-    "style": ["minimal", "feminine"]
+    "style": ["minimal", "feminine"],
+    "resistance": 3300
   },
   {
     "id": 8,
@@ -80,7 +88,8 @@
     "thickness": 1,
     "color": "black",
     "formality": ["casual", "formal"],
-    "style": ["feminine"]
+    "style": ["feminine"],
+    "resistance": 4700
   },
   {
     "id": 9,
@@ -89,6 +98,7 @@
     "thickness": 2,
     "color": "black",
     "formality": "casual",
-    "style": ["sporty", "minimal"]
+    "style": ["sporty", "minimal"],
+    "resistance": 10000
   }
 ]

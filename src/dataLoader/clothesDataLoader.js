@@ -26,6 +26,7 @@ class ClothesData{
         this.style = item.style;
         this.note = item.note ?? item.notes;
         this.available = normalizeAvailability(item.availability ?? item.available);
+        this.resistance = item.resistance;
     }
 }
 
