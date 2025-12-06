@@ -1,7 +1,7 @@
 import five from 'johnny-five';
 const { Boards, Led, Pin } = five;
 
-import {getClothesObjects} from './dataLoader/clothesDataLoader.js';
+import {getClothesObjects} from '../dataLoader/clothesDataLoader.js';
 
 const hangers = await getClothesObjects();
 
