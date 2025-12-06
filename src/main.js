@@ -1,5 +1,5 @@
-import {lightHangers, returnHangers} from './arduino.js';
-import { getClothesRecommendation } from './utils/responseGenerator.js';
+import { lightHangers, returnHangers } from './hardware/arduino.js';
+import { getClothesRecommendation } from './llm/responseGenerator.js';
 
 let hangers = [];
 
