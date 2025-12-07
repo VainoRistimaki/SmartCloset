@@ -10,7 +10,7 @@ let isRecording = false;
 let targetDirectoryHandle = null;
 
 const MP3_FILENAME = 'my_record.mp3';
-const PREFERRED_DIRECTORY = 'C:\\dev\\SmartCloset';
+const PREFERRED_DIRECTORY = '/Documents/emilia/KAISTkurssit/DAI/SmartCloset';
 
 const startButton  = document.getElementById('startButton');
 const stopButton   = document.getElementById('stopButton');

@@ -19,7 +19,8 @@ export async function speechToText(filePath) {
     const transcription = await groq.audio.transcriptions.create({
       file: fs.createReadStream(filePath), // Audio file stream
       model: "whisper-large-v3",           // STT model
-      response_format: "text"              // Can be "text", "json", or "verbose_json"
+      response_format: "text",              // Can be "text", "json", or "verbose_json"
+      language: "en"
     });
     const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
     console.log(`groq_stt processing time: ${elapsedSeconds}s`);

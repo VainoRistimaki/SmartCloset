@@ -19,6 +19,7 @@ function parseJsonContent(rawContent) {
 }
 
 export async function getClothesRecommendation(userInput="What should I wear today?") {
+  console.log(userInput)
   try {
     const prompt = await buildPrompt();
 
