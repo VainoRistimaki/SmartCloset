@@ -3,7 +3,7 @@ import { stdin as input, stdout as output } from 'node:process';
 import { User } from './dataLoader/userDataLoader.js';
 import perfitChatbot from './llm/perfitChatbot.js';
 
-const HARDWARE = false;
+const HARDWARE = true;
 let lightHangers = () => {};
 let returnHangers = () => [];
 

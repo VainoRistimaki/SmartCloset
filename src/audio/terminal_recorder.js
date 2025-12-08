@@ -32,7 +32,7 @@ function buildFfmpegArgs(outputPath) {
     // macOS avfoundation: audio device index after colon. Default ":1".
     // To list devices: run `ffmpeg -f avfoundation -list_devices true -i ""`
     // If DEVICE is set, use that (e.g. DEVICE="0" or DEVICE="1" or DEVICE="2").
-    const devIndex = deviceEnv || '1';
+    const devIndex = deviceEnv || '0';
     const avInput = `:${devIndex}`;
     return ['-f', 'avfoundation', '-i', avInput, ...common, outputPath];
   } else if (platform === 'linux') {

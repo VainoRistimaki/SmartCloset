@@ -82,7 +82,7 @@ class Arduino {
 
             this.readPins[id].query((state) => {
 
-                console.log("Pin" + id + " Value: " + state.value);
+                //console.log("Pin" + id + " Value: " + state.value);
 
                 const resistance = this.calculatePulldownResistance(state.value * (5.0 / 1023.0));
                 //console.log("Pin" + id + " Resistance: " + resistance);
@@ -130,8 +130,8 @@ class Arduino {
 
        //this.hangers = this.sortHangersBasedOnPins(this.pinsResistances)
 
-        //const data = this.hangers.map(h => h ? 1 : 0)
-        //console.log(this.hangers.data, this.id);
+        const data = this.hangers.map(h => h ? 1 : 0)
+        console.log(data, this.id);
         //await postData(data, this.id);
     }
 
