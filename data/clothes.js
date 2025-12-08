@@ -7,7 +7,7 @@
     "color": "black",
     "formality": "formal",
     "style": ["chic", "minimal"],
-    "resistance": 47
+    "resistance": 1.5
   },
   {
     "id": 1,

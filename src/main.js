@@ -1,14 +1,19 @@
 import {lightHangers, returnHangers} from './arduino.js';
 import { getClothesRecommendation } from './utils/responseGenerator.js';
+import {speechToText} from './utils/audio_groq.js'
 
 let hangers = [];
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const text = await speechToText("../public/my_record.mp3");
 
-await delay(10000);
+console.log(text);
 
-await selectClothes("I have to run marathon");
+
+await delay(8000);
+
+await selectClothes(text);
 //await lightHangers([1, 2, 3, 4, 5]);
 
 

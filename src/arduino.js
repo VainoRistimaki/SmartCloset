@@ -82,12 +82,12 @@ class Arduino {
 
             this.readPins[id].query((state) => {
 
-                //console.log("Pin" + id + " Value: " + state.value);
+                console.log("Pin" + id + " Value: " + state.value);
 
                 const resistance = this.calculatePulldownResistance(state.value * (5.0 / 1023.0));
                 //console.log("Pin" + id + " Resistance: " + resistance);
 
-                if (state.value > 1000) {
+                if (state.value > 1000 || state.value < 20) {
                     this.pinsResistances[id] = null;
                     this.hangers[id] = null;
                 }
@@ -115,6 +115,8 @@ class Arduino {
             });
 
             this.writePins[id].low();
+
+            await delay(100);
         }
     }
 
@@ -263,7 +265,7 @@ async function alternatingLoop() {
 
     current = (current + 1) % arduinos.length; // alternate 0→1→0→1
 
-    setTimeout(alternatingLoop, 500); // run again in 1 second
+    setTimeout(alternatingLoop, 1500); // run again in 1 second
 }
 
 alternatingLoop();
