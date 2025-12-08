@@ -1,0 +1,33 @@
+{
+  "name": "Subin",
+  "age": 22,
+  "job": "university student",
+  "ehtnicity": "Korean",
+  "physicalProfile": {
+    "heightCm": 160,
+    "weightKg": 50,
+    "gender": "female",
+     "skinTone": "21N(foundation color)"
+  },
+  "stylePreference": [
+    {
+      "style": "sexy",
+      "priority": 3
+    },
+    {
+      "style": "cute",
+      "priority": 2
+    },
+    {
+      "style": "feminine",
+      "priority": 1
+    },
+    {
+        "style": "casual",
+        "priority": 4
+    }
+  ],
+  "location": {
+    "city": "Daejeon"
+  }
+}

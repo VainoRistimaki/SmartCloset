@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
-const CLOTH_DATA_FILE = new URL('../../data/clothes.json', import.meta.url);
+const DATA_DIR = new URL('../../data/', import.meta.url);
+const DEFAULT_CLOTH_DATA_FILE = new URL('clothes.js', DATA_DIR);
 
 function normalizeAvailability(value) {
     if (typeof value === 'boolean') {
@@ -14,8 +15,8 @@ function normalizeAvailability(value) {
     return value === undefined ? true : Boolean(value);
 }
 
-class ClothesData{
-    constructor(item){
+class Cloth {
+    constructor(item) {
         this.id = item.id;
         this.name = item.name;
         this.type = item.type;
@@ -24,15 +25,16 @@ class ClothesData{
         this.color = item.color;
         this.formality = item.formality;
         this.style = item.style;
-        this.note = item.note ?? item.notes;
-        this.available = normalizeAvailability(item.availability ?? item.available);
+        this.notes = item.notes;
+        // Default to available if the field is missing.
+        this.availability = normalizeAvailability(item.availability);
         this.resistance = item.resistance;
     }
 }
 
-async function getClothData() {
+async function readClothesFile(fileUrl = DEFAULT_CLOTH_DATA_FILE) {
     try {
-        const raw = await readFile(CLOTH_DATA_FILE, 'utf-8');
+        const raw = await readFile(fileUrl, 'utf-8');
         const parsed = JSON.parse(raw);
 
         if (Array.isArray(parsed)) {
@@ -45,18 +47,35 @@ async function getClothData() {
 
         throw new Error('Unexpected cloth data format.');
     } catch (error) {
-        console.error('Failed to load cloth data:', error);
+        console.error(`Failed to load cloth data from ${fileUrl}:`, error);
         throw error;
     }
 }
 
-async function getClothesObjects(){
-    const rawClothData = await getClothData();
-    return rawClothData.map(item => new ClothesData(item));
+async function getClothesObject(user) {
+    // Try user-specific file first (if provided), otherwise fall back to default.
+    const filesToTry = [];
+    if (user) {
+        filesToTry.push(new URL(`${user}_clothes.json`, DATA_DIR));
+    }
+    filesToTry.push(DEFAULT_CLOTH_DATA_FILE);
+
+    let lastError;
+    for (const fileUrl of filesToTry) {
+        try {
+            const rawClothData = await readClothesFile(fileUrl);
+            return rawClothData.map(item => new Cloth(item));
+        } catch (error) {
+            lastError = error;
+            // Only warn on the user-specific file; default failure will throw.
+            if (fileUrl !== DEFAULT_CLOTH_DATA_FILE) {
+                console.warn(`Falling back to default clothes file due to error with ${fileUrl}:`, error);
+            }
+        }
+    }
+
+    // If we got here, even default failed.
+    throw lastError;
 }
 
-const genClothObjects = getClothesObjects;
-
-// console.log(await getClothesObjects());
-
-export { getClothData, getClothesObjects, genClothObjects };
+export { getClothesObject, Cloth };
