@@ -65,8 +65,23 @@ class PerfitChatbot {
       console.error("LLM parse error:", err);
     }
 
+    const recommendation = json?.sets
+      ? {
+          sets: json.sets.map(({ name, items }) => ({
+            name,
+            items,
+          })),
+        }
+      : null;
+
+    const warmthOnly = json?.sets
+      ? json.sets
+          .map(({ name, warmth_reason }) => `${name || "Set"}: ${warmth_reason || "No warmth reason provided."}`)
+          .join("\n")
+      : raw;
+
     this.messages.push({ role: "assistant", content: raw });
-    return [json, raw];
+    return [recommendation, warmthOnly];
   }
 
   async userLifted(lifted) {

@@ -66,5 +66,5 @@ while (true) {
             lightHangers(indexes)
         }
     }
-    console.log("Chatbot Response:\n", response);
+    console.log("Warmth Reasons:\n", response);
 }
