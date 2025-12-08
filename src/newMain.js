@@ -3,13 +3,48 @@ import { stdin as input, stdout as output } from 'node:process';
 import { User } from './dataLoader/userDataLoader.js';
 import perfitChatbot from './llm/perfitChatbot.js';
 
-const HARDWARE = true;
+import readline from "node:readline";
+import { startRecording, stopRecording } from './audio/terminal_recorder.js';
+import { speechToText, textToSpeech } from './audio/audio_groq.js';
+
+import {emitter} from "./hardware/button_emulator.js"
+
+import pkg from 'play-sound';
+const player = pkg();
+
+
+
+
+//The button logic:
+
+emitter.on("recording-changed", value => {
+  if (value) {
+    startRecording();
+  }
+  else {
+    stopRecording();
+    processRecording();
+  }
+});
+
+
+
+//The took hanger logic:
+
+emitter.on("clothes-lifted", lifted => {
+    selectClothesAfterPicked(lifted);
+});
+
+
+
+const HARDWARE = false;
 let lightHangers = () => {};
 let returnHangers = () => [];
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const rl = createInterface({ input, output });
+
 
 // CLI version
 const getUserInput = async (prompt = 'Your input: ') => {
@@ -38,10 +73,15 @@ if (HARDWARE) {
 // Initialize user chatbot using user info and clothes data
 const myChatbot = perfitChatbot(user); // todo
 
+/*
 // Start chatbot loop
 while (true) {
-    const userInput = await getUserInput();
+    if (!recordingReady) {
+        continue;
+    }
+    recordingReady = false;
     let output;
+    /*
     if (userInput.toLowerCase() === 'exit') {
         console.log('Exiting chatbot. Goodbye!');
         break;
@@ -54,17 +94,110 @@ while (true) {
             console.log("Device not connected.");
         }
         continue;
-    } else{
-        output = await myChatbot.userMessage(userInput); // todo
-    }
+        */
+    //} else{
+        //output = await myChatbot.userMessage(lastTranscription); // todo
+    //}
+    /*
     const [recommendation, response] = output;
     if (recommendation) {
         console.log("Clothes Recommendation:\n", JSON.stringify(recommendation, null, 2));
         if(HARDWARE) {
             const indexes = recommendation.sets[0].items.map(item => item.id);
             console.log("Lighting hangers for items with IDs: ", indexes);
+            
+            const speech = recommendation.sets[0].warmth_reason
+            console.log(speech)
+            await textToSpeech(speech);
+            player.play("output_audio.mp3");
+
             lightHangers(indexes)
         }
     }
     console.log("Warmth Reasons:\n", response);
+}
+
+*/
+
+/*
+readline.emitKeypressEvents(process.stdin);
+if (process.stdin.isTTY) process.stdin.setRawMode(true);
+
+console.log('Press SPACE to start/stop recording. Press Ctrl+C to exit.');
+
+process.stdin.on('keypress', (str, key) => {
+  // key.sequence might be ' ' for space
+  if (key && key.name === 'space') {
+    if (!recording) {
+        recording = true;
+        startRecording();
+    }
+    else {
+        recording = false;
+        stopRecording();
+        processRecording();
+    };
+    return;
+  }
+
+  // exit on ctrl+c or ctrl+d
+  if ((key && key.ctrl && key.name === 'c') || key.sequence === '\u0004') {
+    if (recording) {
+        recording = false;
+      console.log('Stopping active recording before exit...');
+      stopRecording();
+      // wait a little for ffmpeg to exit
+      setTimeout(() => process.exit(0), 1000);
+    } else {
+      process.exit(0);
+    }
+  }
+});
+
+process.on('SIGINT', () => {
+  console.log('\nSIGINT received.');
+  if (recording) {
+    recording = false;
+    stopRecording()
+};
+  setTimeout(() => process.exit(0), 500);
+});
+*/
+
+
+async function processRecording() {
+    await delay(2000); // wait for file to be finalized
+    const audioFilePath = 'my_recording.mp3';
+    const transcription = await speechToText(audioFilePath);
+   // console.log("Transcription: ", transcription);
+    await selectClothes(transcription);
+    return transcription;
+}
+
+
+
+async function selectClothes(input) {
+    //hangers = returnHangers();
+    const [recommendation, response] = await myChatbot.userMessage(input)
+    await playSoundAndLight(recommendation, response);
+}
+
+async function selectClothesAfterPicked(input) {
+    //hangers = returnHangers();
+    const [recommendation, response] = await myChatbot.userLifted(input)
+    await playSoundAndLight(recommendation, response);
+}
+
+async function playSoundAndLight(recommendation, response) {
+    if (recommendation) {
+        console.log("Clothes Recommendation:\n", JSON.stringify(recommendation, null, 2));
+        const indexes = recommendation.sets[0].items.map(item => item.id);
+       
+        console.log(response)
+        await textToSpeech(response);
+        player.play("output_audio.mp3");
+
+        console.log("Lighting hangers for items with IDs: ", indexes);
+        lightHangers(indexes)
+    }
 }

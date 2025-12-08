@@ -1,9 +1,20 @@
 import five from 'johnny-five';
 const { Boards, Led, Pin } = five;
 
+import EventEmitter from 'events';
+const emitter = new EventEmitter();
+
 import {getClothesObject} from '../dataLoader/clothesDataLoader.js';
 
 const hangers = await getClothesObject();
+
+let recording = false;
+
+function toggleRecording() {
+    recording = !recording
+    emitter.emit("recording-changed", recording);
+}
+
 
 //console.log(hangers);
 
@@ -361,4 +372,4 @@ while (true) {
     */
 
 
-export {lightHangers, returnHangers}
+export {lightHangers, returnHangers, emitter, toggleRecording}
