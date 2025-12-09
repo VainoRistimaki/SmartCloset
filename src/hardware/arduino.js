@@ -15,7 +15,6 @@ function toggleRecording() {
     emitter.emit("recording-changed", recording);
 }
 
-
 //console.log(hangers);
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -32,7 +31,6 @@ async function postData(data) {
             hangers: data
         }),
     });
-
 }
 
 
@@ -48,6 +46,7 @@ class Arduino {
         this.readPins = []
         this.writePins = [3, 5, 6, 9, 10];
         this.hangers = [null, null, null, null, null];
+        this.oldHangers = null;
         this.resistor = 220
 
         this.pinsResistances = [0, 0, 0, 0, 0];
@@ -143,6 +142,20 @@ class Arduino {
 
         const data = this.hangers.map(h => h ? 1 : 0)
         console.log(data, this.id);
+
+        if (this.hangers !== this.oldHangers && this.oldHangers != null) {
+            const change = this.hangers.map((h, i) => {
+                if (h !== this.oldHangers[i]) {
+                    return h ? h.id : null;
+                }
+                return null;
+            }).filter(h => h !== null);
+            
+            console.log("Hangers changed on Arduino ", this.id, ": ", change);
+            emitter.emit("clothes-lifted", change);
+        }
+
+        this.oldHangers = [...this.hangers];
         //await postData(data, this.id);
     }
 

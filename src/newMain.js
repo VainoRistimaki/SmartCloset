@@ -13,7 +13,7 @@ import pkg from 'play-sound';
 const player = pkg();
 
 
-
+let chosenHangers = [];
 
 //The button logic:
 
@@ -32,7 +32,9 @@ emitter.on("recording-changed", value => {
 //The took hanger logic:
 
 emitter.on("clothes-lifted", lifted => {
-    selectClothesAfterPicked(lifted);
+    if (!chosenHangers.includes(lifted.id)) {
+        selectClothesAfterPicked(lifted);
+    }
 });
 
 
@@ -51,6 +53,7 @@ const getUserInput = async (prompt = 'Your input: ') => {
     const answer = await rl.question(prompt);
     return answer.trim();
 };
+
 
 // Initialize user (loads profile + clothes from data/<user>.json and data/<user>_clothes.json)
 const userName = "subin";
@@ -198,6 +201,7 @@ async function playSoundAndLight(recommendation, response) {
         player.play("output_audio.mp3");
 
         console.log("Lighting hangers for items with IDs: ", indexes);
+        chosenHangers = indexes;
         lightHangers(indexes)
     }
 }
