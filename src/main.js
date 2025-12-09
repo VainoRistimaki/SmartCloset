@@ -1,9 +1,14 @@
-//import { lightHangers, returnHangers } from './hardware/arduino.js';
+import { lightHangers, returnHangers } from './hardware/arduino.js';
 import { getClothesRecommendation } from './llm/responseGenerator.js';
 import readline from "node:readline";
 import { startRecording, stopRecording } from './audio/terminal_recorder.js';
-//import { speechToText } from './audio/audio_groq.js';
-import {speechToText} from './audio/audio_whisper.js';
+import { speechToText, textToSpeech } from './audio/audio_groq.js';
+//import {player} from 'play-sound'
+//import {speechToText} from './audio/audio_whisper.js';
+
+import pkg from 'play-sound';
+
+const player = pkg();
 
 let hangers = [];
 let recording = false;
@@ -11,8 +16,11 @@ let recording = false;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-await delay(10000);
+//const text = await speechToText("../public/my_record.mp3");
 
+//console.log(text);
+
+await delay(8000);
 
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) process.stdin.setRawMode(true);
@@ -86,7 +94,16 @@ async function selectClothes(input) {
     if (recommendation) {
         console.log("Clothes Recommendation:\n", JSON.stringify(recommendation, null, 2));
         const indexes = recommendation.sets[0].items.map(item => item.id);
+        const speech = recommendation.sets[0].warmth_reason
+        console.log(speech)
+        
+        await textToSpeech(speech);
+
+        //await delay(1000);
+
+        player.play("output_audio.mp3");
+
         console.log("Lighting hangers for items with IDs: ", indexes);
-        //lightHangers(indexes)
+        lightHangers(indexes)
     }
 }

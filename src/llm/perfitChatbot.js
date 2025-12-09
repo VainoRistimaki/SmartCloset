@@ -86,14 +86,18 @@ class PerfitChatbot {
 
   async userLifted(lifted) {
     await this.ready;
+    /*
     const liftedText = Array.isArray(lifted)
       ? lifted.map(describeCloth).filter(Boolean).join(", ")
       : describeCloth(lifted);
+      */
+    const liftedText = lifted
 
     const updateMessage = liftedText
-      ? `Hanger update: user picked up ${liftedText}. Consider availability changes if relevant.`
+      ? `Hanger update: user picked up cloth number ${liftedText}. Consider availability changes if relevant.`
       : "Hanger update: change detected but no item details available.";
 
+    console.log(updateMessage);
     this.messages.push({ role: "developer", content: updateMessage });
     return this.userMessage("옷걸이 상태가 변경됐어. 새로운 추천을 부탁해.");
   }

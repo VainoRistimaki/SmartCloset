@@ -32,7 +32,7 @@ function buildFfmpegArgs(outputPath) {
     // macOS avfoundation: audio device index after colon. Default ":1".
     // To list devices: run `ffmpeg -f avfoundation -list_devices true -i ""`
     // If DEVICE is set, use that (e.g. DEVICE="0" or DEVICE="1" or DEVICE="2").
-    const devIndex = deviceEnv || '1';
+    const devIndex = deviceEnv || '0';
     const avInput = `:${devIndex}`;
     return ['-f', 'avfoundation', '-i', avInput, ...common, outputPath];
   } else if (platform === 'linux') {
@@ -56,24 +56,24 @@ function startRecording() {
   const out = timestampFilename();
   const args = buildFfmpegArgs(out);
 
-  console.log('Starting recording →', out);
-  console.log('ffmpeg args:', args.join(' '));
+  //log('Starting recording →', out);
+  //console.log('ffmpeg args:', args.join(' '));
 
   // spawn ffmpeg
   ffmpegProc = spawn('ffmpeg', args, { stdio: ['pipe', 'inherit', 'inherit'] });
 
   ffmpegProc.on('error', (err) => {
-    console.error('Failed to start ffmpeg. Make sure ffmpeg is installed and in your PATH.');
-    console.error(err);
+    //console.error('Failed to start ffmpeg. Make sure ffmpeg is installed and in your PATH.');
+    //console.error(err);
     ffmpegProc = null;
     recording = false;
   });
 
   ffmpegProc.on('exit', (code, signal) => {
     if (code === 0) {
-      console.log('Recording saved:', out);
+      //console.log('Recording saved:', out);
     } else {
-      console.log(`ffmpeg exited with code ${code} signal ${signal}`);
+      //console.log(`ffmpeg exited with code ${code} signal ${signal}`);
     }
     ffmpegProc = null;
     recording = false;
@@ -84,7 +84,7 @@ function startRecording() {
 
 function stopRecording() {
   if (!recording || !ffmpegProc) return;
-  console.log('Stopping recording...');
+  //console.log('Stopping recording...');
   // Ask ffmpeg to quit gracefully by sending 'q' to its stdin (preferred)
   try {
     ffmpegProc.stdin.write('q');

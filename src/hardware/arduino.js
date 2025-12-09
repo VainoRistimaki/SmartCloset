@@ -1,9 +1,20 @@
 import five from 'johnny-five';
 const { Boards, Led, Pin } = five;
 
+import EventEmitter from 'events';
+const emitter = new EventEmitter();
+
 import {getClothesObject} from '../dataLoader/clothesDataLoader.js';
 
 const hangers = await getClothesObject();
+
+let recording = false;
+
+function toggleRecording() {
+    recording = !recording
+    emitter.emit("recording-changed", recording);
+}
+
 
 //console.log(hangers);
 
@@ -87,7 +98,7 @@ class Arduino {
                 const resistance = this.calculatePulldownResistance(state.value * (5.0 / 1023.0));
                 //console.log("Pin" + id + " Resistance: " + resistance);
 
-                if (state.value > 1000) {
+                if (state.value > 1000 || state.value < 20) {
                     this.pinsResistances[id] = null;
                     this.hangers[id] = null;
                 }
@@ -115,6 +126,8 @@ class Arduino {
             });
 
             this.writePins[id].low();
+
+            await delay(100);
         }
     }
 
@@ -128,8 +141,8 @@ class Arduino {
 
        //this.hangers = this.sortHangersBasedOnPins(this.pinsResistances)
 
-        //const data = this.hangers.map(h => h ? 1 : 0)
-        //console.log(this.hangers.data, this.id);
+        const data = this.hangers.map(h => h ? 1 : 0)
+        console.log(data, this.id);
         //await postData(data, this.id);
     }
 
@@ -263,7 +276,7 @@ async function alternatingLoop() {
 
     current = (current + 1) % arduinos.length; // alternate 0→1→0→1
 
-    setTimeout(alternatingLoop, 500); // run again in 1 second
+    setTimeout(alternatingLoop, 1500); // run again in 1 second
 }
 
 alternatingLoop();
@@ -359,4 +372,4 @@ while (true) {
     */
 
 
-export {lightHangers, returnHangers}
+export {lightHangers, returnHangers, emitter, toggleRecording}
