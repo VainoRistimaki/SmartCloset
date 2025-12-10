@@ -6,7 +6,6 @@ import perfitChatbot from './llm/perfitChatbot.js';
 import readline from "node:readline";
 import { startRecording, stopRecording } from './audio/terminal_recorder.js';
 //import { speechToText, textToSpeech } from './audio/audio_groq.js';
-
 import { speechToText, textToSpeech } from './audio/audio_whisper.js';
 
 import { emitter as hardwareEmitter } from "./hardware/arduino.js";
@@ -43,6 +42,9 @@ controlEmitter.on("clothes-lifted", lifted => {
         selectClothesAfterPicked(lifted);
     }
 });
+
+
+
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

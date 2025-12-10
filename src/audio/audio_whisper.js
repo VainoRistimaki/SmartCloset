@@ -16,7 +16,7 @@ export async function speechToText(audio, client = openai, fileSystem = fs) {
   return response.text;
 }
 
-export async function textToSpeech(text, outputFile, client = openai, fileSystem = fs) {
+export async function textToSpeech(text, outputFile="output_audio.mp3", client = openai, fileSystem = fs) {
   const startTime = Date.now();
   const response = await client.audio.speech.create({
     model: 'tts-1',
