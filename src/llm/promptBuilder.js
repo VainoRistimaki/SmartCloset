@@ -1,7 +1,7 @@
 import { getWeatherData } from '../dataLoader/weatherDataLoader.js';
 import { User } from '../dataLoader/userDataLoader.js';
 
-export async function buildPrompt(userName = 'subin') {
+async function buildPrompt(userName = 'subin') {
     const user = await User.load(userName);
     const personData = user.info || {};
     const profile = personData.physicalProfile || user.profile || {};
@@ -50,7 +50,7 @@ export async function buildPrompt(userName = 'subin') {
         .forEach((item, index) => {
             prompt += `${index}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
         });
-    prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in warmth_reason instead of ignoring thickness.`;
+    prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in explanation instead of ignoring thickness.`;
 
     return prompt;
 }
@@ -74,7 +74,7 @@ JSON shape:
     {
       "name": "Set 1",
       "items": [ { "id": number, "name": string } ],
-      "warmth_reason": "Why thickness matches weather, incl. key weather factors"
+      "explanation": "Why thickness matches weather, incl. key weather factors"
     }
   ]
 }
@@ -112,7 +112,7 @@ export async function buildUserInfoPrompt(userInput) {
     prompt += `\n`;
 
     prompt += buildClothesPrompt(clothData);
-    prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in warmth_reason instead of ignoring thickness.`;
+    prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in explanation instead of ignoring thickness.`;
 
     return prompt.trim();
 }

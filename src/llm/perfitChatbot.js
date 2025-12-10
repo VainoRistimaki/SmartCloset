@@ -21,6 +21,48 @@ function parseJsonContent(rawContent) {
   return JSON.parse(jsonString);
 }
 
+const outfitResponseFormat = {
+  type: "json_schema",
+  json_schema: {
+    name: "outfit_sets",
+    strict: true,
+    schema: {
+      type: "object",
+      additionalProperties: false,
+      required: ["sets"],
+      properties: {
+        sets: {
+          type: "array",
+          minItems: 1,
+          maxItems: 3,
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["name", "items", "explanation"],
+            properties: {
+              name: { type: "string" },
+              explanation: { type: "string" },
+              items: {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["id", "name"],
+                  properties: {
+                    id: { type: "number" },
+                    name: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 function describeCloth(item) {
   if (!item) return "";
   const id = item.id ?? "unknown-id";
@@ -52,7 +94,7 @@ class PerfitChatbot {
 
     const response = await client.chat.completions.create({
       model: "gpt-4o",
-      response_format: { type: "json_object" },
+      response_format: outfitResponseFormat,
       messages: this.messages,
       temperature: 0.4,
     });
@@ -67,16 +109,17 @@ class PerfitChatbot {
 
     const recommendation = json?.sets
       ? {
-          sets: json.sets.map(({ name, items }) => ({
+          sets: json.sets.map(({ name, items, explanation }) => ({
             name,
             items,
+            explanation,
           })),
         }
       : null;
 
     const warmthOnly = json?.sets
       ? json.sets
-          .map(({ name, warmth_reason }) => `${name || "Set"}: ${warmth_reason || "No warmth reason provided."}`)
+          .map(({ name, explanation }) => `${name || "Set"}: ${explanation || "No explanation provided."}`)
           .join("\n")
       : raw;
 

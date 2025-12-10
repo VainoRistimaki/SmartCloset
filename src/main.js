@@ -94,7 +94,7 @@ async function selectClothes(input) {
     if (recommendation) {
         console.log("Clothes Recommendation:\n", JSON.stringify(recommendation, null, 2));
         const indexes = recommendation.sets[0].items.map(item => item.id);
-        const speech = recommendation.sets[0].warmth_reason
+        const speech = recommendation.sets[0].explanation
         console.log(speech)
         
         await textToSpeech(speech);
