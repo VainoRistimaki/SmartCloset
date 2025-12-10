@@ -1,5 +1,5 @@
 import five from 'johnny-five';
-const { Boards, Led, Pin } = five;
+const { Boards, Led, Pin, Button } = five;
 
 import EventEmitter from 'events';
 const emitter = new EventEmitter();
@@ -254,6 +254,11 @@ let nowReady = false;
 boards.on("ready", async () => {
     arduinos = [new Arduino(1, boards.byId(1)), new Arduino(2, boards.byId(2))];
     arduinos.forEach(arduino => arduino.initialize());
+    const button = new Button({ pin: "A5", board: boards.byId(1), isPullup: true });
+    button.on("press", () => {
+        console.log("Button pressed");
+        toggleRecording();
+    });
     nowReady = true;
 });
 /*
