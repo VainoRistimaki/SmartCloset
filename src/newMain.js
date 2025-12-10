@@ -8,8 +8,8 @@ import { startRecording, stopRecording } from './audio/terminal_recorder.js';
 //import { speechToText, textToSpeech } from './audio/audio_groq.js';
 import { speechToText, textToSpeech } from './audio/audio_whisper.js';
 
-import {emitter2} from "./hardware/button_emulator.js"
-import {emitter} from "./hardware/arduino.js"
+import { emitter as hardwareEmitter } from "./hardware/arduino.js";
+import { emitter as emulatorEmitter } from "./hardware/button_emulator.js";
 
 import pkg from 'play-sound';
 const player = pkg();
@@ -20,9 +20,13 @@ let playingSound = null;
 
 let chosenHangers = [];
 
-//The button logic:
+const HARDWARE = true;
+let lightHangers = () => {};
+let returnHangers = () => [];
+const controlEmitter = HARDWARE ? hardwareEmitter : emulatorEmitter;
 
-emitter2.on("recording-changed", value => {
+//The button logic:
+controlEmitter.on("recording-changed", value => {
   if (value) {
     startRecording();
   }
@@ -36,8 +40,7 @@ emitter2.on("recording-changed", value => {
 
 //The took hanger logic:
 
-emitter.on("clothes-lifted", lifted => {
-    console.log("HERE")
+controlEmitter.on("clothes-lifted", lifted => {
     if (!chosenHangers.includes(lifted.id)) {
         selectClothesAfterPicked(lifted);
     }
@@ -45,9 +48,6 @@ emitter.on("clothes-lifted", lifted => {
 
 
 
-const HARDWARE = true;
-let lightHangers = () => {};
-let returnHangers = () => [];
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
