@@ -142,22 +142,8 @@ class Arduino {
 
         const data = this.hangers.map(h => h ? 1 : 0)
         console.log(data, this.id);
-
-        if (this.hangers !== this.oldHangers && this.oldHangers != null) {
-            const change = this.hangers.map((h, i) => {
-                if (h !== this.oldHangers[i]) {
-                    return h ? h.id : null;
-                }
-                return null;
-            }).filter(h => h !== null);
-
-            if (change.length != 0) {
-                console.log("Hangers changed on Arduino ", this.id, ": ", change);
-                emitChanges(change)
-            }
-        }
-
-        this.oldHangers = [...this.hangers];
+        //emitChanges(this.hangers, this.id);
+        //this.oldHangers = [...this.hangers];
         //await postData(data, this.id);
     }
 
@@ -297,6 +283,8 @@ async function alternatingLoop() {
     current = (current + 1) % arduinos.length; // alternate 0→1→0→1
 
     setTimeout(alternatingLoop, 1500); // run again in 1 second
+
+    emitChanges(returnHangers());
 }
 
 alternatingLoop();
@@ -372,7 +360,6 @@ function returnHangers() {
 }
 
 function emitChanges(change) {
-    console.log("DO YOU HEAR?")
     emitter.emit("clothes-lifted", change);
 }
 

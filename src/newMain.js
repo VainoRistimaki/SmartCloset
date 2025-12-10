@@ -21,6 +21,9 @@ let playingSound = null;
 
 let chosenHangers = [];
 
+const absentHangers = [];
+const hangerAbsentTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
 const HARDWARE = true;
 let lightHangers = () => {};
 let returnHangers = () => [];
@@ -42,13 +45,52 @@ controlEmitter.on("recording-changed", value => {
 //The took hanger logic:
 
 controlEmitter.on("clothes-lifted", lifted => {
-    
+    let i = 0;
+
+    const absent = []
+
+    for (let i = 0; i < 10; i++) {
+        if (!lifted.map((h) => h ? h.id : null).includes(i)) {
+            absent.push(i)
+        }
+        else {
+            absent.push(null)
+        }
+    }
+
+    for (const hanger of absent) {
+        if (hanger != null) {
+            if (!chosenHangers.includes(i)) {
+                hangerAbsentTimes[i] += 1;
+                if (hangerAbsentTimes[i] >= 5) {
+                    if (!absentHangers.includes(i)) {
+                        absentHangers.push(i);
+                        selectClothesAfterPicked(lifted);
+                    }
+                    hangerAbsentTimes[i] = 0;
+                }
+            }
+        }
+
+        else {
+            hangerAbsentTimes[i] = 0;
+            const index = absentHangers.indexOf(i)
+            if (index != -1) {
+                absentHangers.splice(index, 1)
+            }
+        }
+        i++;
+    }
+
+    /*
     if (!chosenHangers.includes(lifted.id)) {
         //absentTimes[lifted.id] += 1;
             //if (absentTimes > 5) {
                 selectClothesAfterPicked(lifted);
             //}
     }
+    */
+   console.log("Absent times: ", hangerAbsentTimes)
 });
 
 

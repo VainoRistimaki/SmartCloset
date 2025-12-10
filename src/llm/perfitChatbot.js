@@ -129,12 +129,11 @@ class PerfitChatbot {
 
   async userLifted(lifted) {
     await this.ready;
-    /*
     const liftedText = Array.isArray(lifted)
       ? lifted.map(describeCloth).filter(Boolean).join(", ")
       : describeCloth(lifted);
-      */
-    const liftedText = lifted
+
+    //const liftedText = lifted
 
     const updateMessage = liftedText
       ? `Hanger update: user picked up cloth number ${liftedText}. Consider availability changes if relevant.`
