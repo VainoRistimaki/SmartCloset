@@ -47,7 +47,7 @@ JSON shape:
     {
       "name": "Set 1",
       "items": [ { "id": number, "name": string } ],
-      "warmth_reason": "Why thickness matches weather, incl. key weather factors"
+      "explanation": "Why thickness matches weather, incl. key weather factors"
     }
   ]
 }
