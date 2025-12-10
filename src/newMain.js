@@ -5,9 +5,11 @@ import perfitChatbot from './llm/perfitChatbot.js';
 
 import readline from "node:readline";
 import { startRecording, stopRecording } from './audio/terminal_recorder.js';
-import { speechToText, textToSpeech } from './audio/audio_groq.js';
+//import { speechToText, textToSpeech } from './audio/audio_groq.js';
+import { speechToText, textToSpeech } from './audio/audio_whisper.js';
 
-import {emitter} from "./hardware/button_emulator.js"
+import {emitter2} from "./hardware/button_emulator.js"
+import {emitter} from "./hardware/arduino.js"
 
 import pkg from 'play-sound';
 const player = pkg();
@@ -17,7 +19,7 @@ let chosenHangers = [];
 
 //The button logic:
 
-emitter.on("recording-changed", value => {
+emitter2.on("recording-changed", value => {
   if (value) {
     startRecording();
   }
@@ -32,6 +34,7 @@ emitter.on("recording-changed", value => {
 //The took hanger logic:
 
 emitter.on("clothes-lifted", lifted => {
+    console.log("HERE")
     if (!chosenHangers.includes(lifted.id)) {
         selectClothesAfterPicked(lifted);
     }
@@ -39,7 +42,7 @@ emitter.on("clothes-lifted", lifted => {
 
 
 
-const HARDWARE = false;
+const HARDWARE = true;
 let lightHangers = () => {};
 let returnHangers = () => [];
 

@@ -1,16 +1,16 @@
 import readline from "node:readline";
 import EventEmitter from 'events';
-const emitter = new EventEmitter();
+const emitter2 = new EventEmitter();
 
 let recording = false;
 
 function toggleRecording() {
     recording = !recording
-    emitter.emit("recording-changed", recording);
+    emitter2.emit("recording-changed", recording);
 }
 
 function liftClothes(clothes) {
-    emitter.emit("clothes-lifted", clothes);
+    emitter2.emit("clothes-lifted", clothes);
 }
 
 readline.emitKeypressEvents(process.stdin);
@@ -28,4 +28,4 @@ process.stdin.on('keypress', (str, key) => {
   }
 });
 
-export {emitter, toggleRecording, liftClothes}
+export {emitter2, toggleRecording, liftClothes}

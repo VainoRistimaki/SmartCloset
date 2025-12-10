@@ -150,9 +150,11 @@ class Arduino {
                 }
                 return null;
             }).filter(h => h !== null);
-            
-            console.log("Hangers changed on Arduino ", this.id, ": ", change);
-            emitter.emit("clothes-lifted", change);
+
+            if (change.length != 0) {
+                console.log("Hangers changed on Arduino ", this.id, ": ", change);
+                emitChanges(change)
+            }
         }
 
         this.oldHangers = [...this.hangers];
@@ -364,6 +366,11 @@ function returnHangers() {
     return data;
 }
 
+function emitChanges(change) {
+    console.log("DO YOU HEAR?")
+    emitter.emit("clothes-lifted", change);
+}
+
 //arduino.writePins[0].high();
 
 
@@ -385,4 +392,4 @@ while (true) {
     */
 
 
-export {lightHangers, returnHangers, emitter, toggleRecording}
+export {lightHangers, returnHangers, emitter, toggleRecording, emitChanges}
