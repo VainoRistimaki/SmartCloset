@@ -15,6 +15,9 @@ import pkg from 'play-sound';
 const player = pkg();
 
 
+let playingSound = null;
+
+
 let chosenHangers = [];
 
 //The button logic:
@@ -201,7 +204,14 @@ async function playSoundAndLight(recommendation, response) {
        
         console.log(response)
         await textToSpeech(response);
-        player.play("output_audio.mp3");
+
+        if (playingSound) {
+            playingSound.kill();
+        }
+
+        playingSound = player.play("output_audio.mp3", function(err){
+            if (err && !err.killed) throw err
+        });
 
         console.log("Lighting hangers for items with IDs: ", indexes);
         chosenHangers = indexes;
