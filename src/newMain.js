@@ -43,12 +43,29 @@ controlEmitter.on("recording-changed", value => {
 
 controlEmitter.on("clothes-lifted", lifted => {
     
-    if (!chosenHangers.includes(lifted.id)) {
-        absentTimes[lifted.id] += 1;
-            if (absentTimes > 5) {
-                selectClothesAfterPicked(lifted);
+    const absentOnes = [];
+
+    for (let i = 0; i < absentTimes.length; i++) {
+        if (!lifted.find(h => h.id === i)) {
+            absentTimes[i] = 0;
+        }
+        else {
+            absentTimes[i] += 1;
+            if (!chosenHangers.includes(lifted[i].id)) {
+                if (absentTimes[i] > 5) {
+                    absentOnes.push(lifted[i]);
+                    absentTimes[i] = 0;
+                }
             }
+        }
     }
+
+    console.log("Absent ones after debounce: ", absentTimes);
+
+    if (absentOnes.length > 0) {
+        selectClothesAfterPicked(lifted);
+    }
+
 });
 
 
