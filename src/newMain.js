@@ -14,7 +14,7 @@ import { emitter as hardwareEmitter } from "./hardware/arduino.js";
 import pkg from 'play-sound';
 const player = pkg();
 
-const absentTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+//const absentTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 let playingSound = null;
@@ -44,10 +44,10 @@ controlEmitter.on("recording-changed", value => {
 controlEmitter.on("clothes-lifted", lifted => {
     
     if (!chosenHangers.includes(lifted.id)) {
-        absentTimes[lifted.id] += 1;
-            if (absentTimes > 5) {
+        //absentTimes[lifted.id] += 1;
+            //if (absentTimes > 5) {
                 selectClothesAfterPicked(lifted);
-            }
+            //}
     }
 });
 
