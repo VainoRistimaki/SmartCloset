@@ -9,14 +9,15 @@ import { startRecording, stopRecording } from './audio/terminal_recorder.js';
 import { speechToText, textToSpeech } from './audio/audio_whisper.js';
 
 import { emitter as hardwareEmitter } from "./hardware/arduino.js";
-import { emitter as emulatorEmitter } from "./hardware/button_emulator.js";
+//import { emitter as emulatorEmitter } from "./hardware/button_emulator.js";
 
 import pkg from 'play-sound';
 const player = pkg();
 
+const absentTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
 
 let playingSound = null;
-
 
 let chosenHangers = [];
 
@@ -41,8 +42,12 @@ controlEmitter.on("recording-changed", value => {
 //The took hanger logic:
 
 controlEmitter.on("clothes-lifted", lifted => {
+    
     if (!chosenHangers.includes(lifted.id)) {
-        selectClothesAfterPicked(lifted);
+        absentTimes[lifted.id] += 1;
+            if (absentTimes > 5) {
+                selectClothesAfterPicked(lifted);
+            }
     }
 });
 
