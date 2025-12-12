@@ -19,13 +19,13 @@ class Cloth {
     constructor(item) {
         this.id = item.id;
         this.name = item.name;
-        this.type = item.type;
-        this.thickness = item.thickness;
-        this.seasons = item.seasons;
-        this.color = item.color;
-        this.formality = item.formality;
-        this.style = item.style;
-        this.notes = item.notes;
+        // this.type = item.type;
+        // this.thickness = item.thickness;
+        // this.seasons = item.seasons;
+        // this.color = item.color;
+        // this.formality = item.formality;
+        // this.style = item.style;
+        this.description = item.description;
         // Default to available if the field is missing.
         this.availability = normalizeAvailability(item.availability);
         this.resistance = item.resistance;
