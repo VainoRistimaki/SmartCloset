@@ -38,7 +38,7 @@
     "color": "white",
     "formality": "formal",
     "style": ["feminine", "formal"],
-    "resistance": 330
+    "resistance": 470
   },
   {
     "id": 4,

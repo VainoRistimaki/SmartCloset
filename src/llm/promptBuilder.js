@@ -1,5 +1,7 @@
 import { getWeatherData } from '../dataLoader/weatherDataLoader.js';
 import { User } from '../dataLoader/userDataLoader.js';
+//import { zodTextFormat } from "openai/helpers/zod";
+//import { z } from "zod";
 
 async function buildPrompt(userName = 'subin') {
     const user = await User.load(userName);
@@ -54,6 +56,12 @@ async function buildPrompt(userName = 'subin') {
 
     return prompt;
 }
+
+/*
+const Recommendation = z.object({
+    clotheNames: z.array(z.string()),
+    reason: z.string()
+})*/
 
 export async function buildSystemPrompt() {
     return `

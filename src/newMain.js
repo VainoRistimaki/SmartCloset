@@ -64,7 +64,7 @@ controlEmitter.on("clothes-lifted", lifted => {
         if (hanger != null) {
             if (!chosenHangers.includes(i)) {
                 hangerAbsentTimes[i] += 1;
-                if (hangerAbsentTimes[i] >= 5) {
+                if (hangerAbsentTimes[i] >= 15) {
                     if (!absentHangers.includes(i)) {
                         absentHangers.push(i);
                         selectClothesAfterPicked(lifted);
