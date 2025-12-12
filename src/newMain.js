@@ -30,9 +30,11 @@ let returnHangers = () => [];
 const controlEmitter = HARDWARE ? hardwareEmitter : emulatorEmitter;
 
 //The button logic:
-controlEmitter.on("recording-changed", value => {
+controlEmitter.on("recording-changed", async value => {
   if (value) {
     startRecording();
+    await delay(3000);
+    player.play("beep.mp3");
   }
   else {
     stopRecording();

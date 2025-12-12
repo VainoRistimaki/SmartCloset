@@ -141,7 +141,7 @@ class Arduino {
        //this.hangers = this.sortHangersBasedOnPins(this.pinsResistances)
 
         const data = this.hangers.map(h => h ? 1 : 0)
-        console.log(data, this.id);
+        console.log(this.hangers.map(h => h ? h.id : null), this.id);
         //emitChanges(this.hangers, this.id);
         //this.oldHangers = [...this.hangers];
         //await postData(data, this.id);
