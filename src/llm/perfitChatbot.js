@@ -38,9 +38,8 @@ const outfitResponseFormat = {
           items: {
             type: "object",
             additionalProperties: false,
-            required: ["name", "items", "explanation"],
+            required: ["items", "explanation"],
             properties: {
-              name: { type: "string" },
               explanation: { type: "string" },
               items: {
                 type: "array",
@@ -88,7 +87,7 @@ class PerfitChatbot {
     if (weatherPrompt) this.messages.push({ role: "developer", content: weatherPrompt });
   }
 
-  async userMessage(userInput = "오늘 뭐 입을까?") {
+  async userMessage(userInput = "what should i wear today?") {
     await this.ready;
     this.messages.push({ role: "user", content: userInput });
 
@@ -100,6 +99,7 @@ class PerfitChatbot {
     });
 
     const raw = response.choices[0]?.message?.content || "";
+    this.messages.push({ role: "assistant", content: raw });
     let json = null;
     try {
       json = parseJsonContent(raw);
@@ -108,23 +108,15 @@ class PerfitChatbot {
     }
 
     const recommendation = json?.sets
-      ? {
-          sets: json.sets.map(({ name, items, explanation }) => ({
-            name,
-            items,
-            explanation,
-          })),
-        }
+      ? json.sets.map(({ items }) => items)
       : null;
 
-    const warmthOnly = json?.sets
+    const explanation = json?.sets
       ? json.sets
-          .map(({ name, explanation }) => `${name || "Set"}: ${explanation || "No explanation provided."}`)
-          .join("\n")
+          .map(({ explanation }) => explanation || "No explanation provided.")
       : raw;
 
-    this.messages.push({ role: "assistant", content: raw });
-    return [recommendation, warmthOnly];
+    return [recommendation, explanation];
   }
 
   async userLifted(lifted) {
@@ -150,3 +142,36 @@ export function perfitChatbot(user) {
 }
 
 export default perfitChatbot;
+
+
+// Example usage:
+(async () => {
+  const { createInterface } = await import("node:readline/promises");
+  const { User } = await import("../dataLoader/userDataLoader.js");
+  const user = await User.load("subin"); // Load user profile + clothes
+  const chatbot = perfitChatbot(user);
+
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+
+  while (true) {
+    const userText = (await rl.question("Ask the chatbot (or type 'exit' to quit): ")).trim();
+    if (!userText) {
+      console.log("Please enter a question or type 'exit'.");
+      continue;
+    }
+    if (userText.toLowerCase() === "exit") break;
+
+    const [recommendation, response] = await chatbot.userMessage(userText);
+    if (Array.isArray(recommendation) && Array.isArray(response)) {
+      recommendation.forEach((items, idx) => {
+        console.log(`Clothes Recommendation [${idx}]:\n`, items);
+        console.log(`Explanation [${idx}]:\n`, response[idx] ?? "No explanation provided.");
+      });
+    } else {
+      console.log("Clothes Recommendation:\n", recommendation);
+      console.log("Explanation:\n", response);
+    }
+  }
+
+  rl.close();
+})();

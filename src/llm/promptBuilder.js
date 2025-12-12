@@ -65,28 +65,11 @@ const Recommendation = z.object({
 
 export async function buildSystemPrompt() {
     return `
-You respond ONLY with valid JSON.
-Outline:
-  1) Derive a target warmth level from weather:
-     - feelslike <= 5°C -> warmth 5 (heavy outer, insulating mid, base)
-     - 6-12°C -> warmth 4 (warm outer or layered mid+base)
-     - 13-18°C -> warmth 3 (mid layer + base)
-     - 19-24°C -> warmth 2 (light layer or breathable base)
-     - >= 25°C -> warmth 1 (lightest, breathable)
-     Increase warmth by 1 if wind_kph > 20 or precip_mm > 0.
-  2) Each set must hit the target warmth using available items' Thickness (lightweight < medium < heavyweight); layer to reach target when needed.
-  3) No alternatives inside a set. Output 2-3 sets.
-JSON shape:
-{
-  "sets": [
-    {
-      "name": "Set 1",
-      "items": [ { "id": number, "name": string } ],
-      "explanation": "Why thickness matches weather, incl. key weather factors"
-    }
-  ]
-}
-No extra text outside JSON.
+    You are a helpful, kind, and delightful fashion assistant. 
+    Given a user's profile, style preferences, current weather, available clothes, 
+    and the descriptions of the clothes,
+    you will suggest the suitable outfit sets for the user's situation.
+    Provide explanations for your suggestions in one sentence.
 `.trim();
 }
 
@@ -120,7 +103,6 @@ export async function buildUserInfoPrompt(userInput) {
     prompt += `\n`;
 
     prompt += buildClothesPrompt(clothData);
-    prompt += `\nBased on the above information, suggest a suitable outfit for today. If you cannot meet the target warmth with available thickness, say so in explanation instead of ignoring thickness.`;
 
     return prompt.trim();
 }
@@ -157,7 +139,8 @@ export function buildClothesPrompt(clothData){
     clothData
         .filter(item => item.available !== false && item.availability !== false)
         .forEach((item, index) => {
-            prompt += `${index}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
+            // prompt += `${index}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
+            prompt += `${index}. ${item.name} : ${item.description}\n`;
         });
     return prompt;
 }
@@ -165,3 +148,8 @@ export function buildClothesPrompt(clothData){
 
 // const prompt = await buildPrompt();
 // console.log('Generated Prompt:\n', prompt);
+
+// Quick manual test for buildClothesPrompt when running this file directly.
+// const user = await User.load('subin');
+// const prompt = buildClothesPrompt(user.clothes || []);
+// console.log('Clothes Prompt Preview:\n', prompt);
