@@ -143,7 +143,7 @@ export function perfitChatbot(user) {
 
 export default perfitChatbot;
 
-
+/*
 // Example usage:
 (async () => {
   const { createInterface } = await import("node:readline/promises");
@@ -175,3 +175,4 @@ export default perfitChatbot;
 
   rl.close();
 })();
+*/
