@@ -63,11 +63,14 @@ const outfitResponseFormat = {
 };
 
 function describeCloth(item) {
+  return "id " + item
+  /*
   if (!item) return "";
   const id = item.id ?? "unknown-id";
   const name = item.name ? String(item.name) : "unknown-name";
   const type = item.type ? ` (${item.type})` : "";
   return `${name}${type} [id:${id}]`;
+  */
 }
 
 class PerfitChatbot {

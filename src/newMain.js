@@ -16,7 +16,6 @@ const player = pkg();
 
 //const absentTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-
 let playingSound = null;
 
 let chosenHangers = [];
@@ -64,10 +63,11 @@ controlEmitter.on("clothes-lifted", lifted => {
         if (hanger != null) {
             if (!chosenHangers.includes(i)) {
                 hangerAbsentTimes[i] += 1;
-                if (hangerAbsentTimes[i] >= 15) {
+                if (hangerAbsentTimes[i] >= 13) {
                     if (!absentHangers.includes(i)) {
                         absentHangers.push(i);
-                        selectClothesAfterPicked(lifted);
+                        console.log(absentHangers)
+                        selectClothesAfterPicked(absentHangers);
                     }
                     hangerAbsentTimes[i] = 0;
                 }
@@ -249,10 +249,10 @@ async function selectClothesAfterPicked(input) {
 async function playSoundAndLight(recommendation, response) {
     if (recommendation) {
         console.log("Clothes Recommendation:\n", JSON.stringify(recommendation, null, 2));
-        const indexes = recommendation.sets[0].items.map(item => item.id);
+        const indexes = recommendation[0].map(item => item.id);
        
-        console.log(response)
-        await textToSpeech(response);
+        console.log(JSON.stringify(response, null, 2))
+        await textToSpeech(JSON.stringify(response[0], null, 2));
 
         if (playingSound) {
             playingSound.kill();
