@@ -11,12 +11,12 @@
   },
   {
     "id": 1,
-    "name": "White Puffer Jacket",
+    "name": "White Fur Jacket",
     "type": "outer",
     "thickness": 5,
     "color": "white",
     "formality": "casual",
-    "style": ["casual", "minimal"],
+    "style": ["casual", "street"],
     "resistance": 100
   },
 
@@ -73,11 +73,11 @@
 
   {
     "id": 7,
-    "name": "Black Bootcut Pants",
+    "name": "Blue Bootcut Jeans",
     "type": "bottom",
     "thickness": 2,
-    "color": "black",
-    "formality": ["casual", "formal"],
+    "color": "blue",
+    "formality": ["casual", "street"],
     "style": ["minimal", "feminine"],
     "resistance": 3300
   },
