@@ -137,7 +137,7 @@ export async function buildWeatherPrompt(userInput) {
 export function buildClothesPrompt(clothData){
     let prompt = `Available Clothes:\n`;
     clothData
-        .filter(item => item.available !== false && item.availability !== false)
+    //.filter(item => item.available !== false && item.availability !== false)
         .forEach((item, index) => {
             // prompt += `${index}. ${item.name} - Type: ${item.type}, Thickness: ${item.thickness}, Color: ${item.color}, Formality: ${item.formality}\n`;
             prompt += `${index}. ${item.name} : ${item.description}\n`;
